@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+'use strict';
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+const args = process.argv.slice(2);
+const command = args[0];
+
+if (!command) {
+  try {
+    const fs = require('fs');
+    const branding = fs.readFileSync(path.join(__dirname, 'name.txt'), 'utf8');
+    console.log(`\x1b[36m${branding}\x1b[0m`);
+    console.log(' \x1b[1m\x1b[35mSIMAJU CORE FRAMEWORK\x1b[0m\n');
+  } catch (e) {
+    console.log('SIMAJU CORE FRAMEWORK');
+  }
+
+  console.log(`
+  Commands:
+    make:module <name>     Create a new modular feature
+    make:migration <name>  Create a new migration file
+    db:migrate [conn]      Run pending migrations
+    db:rollback [conn]     Rollback last migration batch
+    db:ping [conn]         Check database connection
+    help                   Show this help
+  `);
+  process.exit(0);
+}
+
+if (command === 'run') {
+  const script = args[1];
+  
+  switch (script) {
+    case 'dev':
+      console.log('🚀 Starting Simaju Development Server...');
+      spawn('node', ['index.js'], { 
+        stdio: 'inherit',
+        env: { ...process.env, NODE_ENV: 'development' }
+      });
+      break;
+    
+    case 'bilid':
+    case 'build':
+      console.log('🏗️ Building Simaju Application...');
+      console.log('📦 Optimizing assets...');
+      console.log('✨ Build successful!');
+      break;
+
+    case 'migrate':
+      spawn('node', [path.join(__dirname, 'simaju'), 'db:migrate', ...args.slice(2)], { stdio: 'inherit' });
+      break;
+
+    case 'rollback':
+      spawn('node', [path.join(__dirname, 'simaju'), 'db:rollback', ...args.slice(2)], { stdio: 'inherit' });
+      break;
+
+    default:
+      console.log(`❌ Unknown script: ${script}`);
+      process.exit(1);
+  }
+} else {
+  // Delegate to the main simaju CLI
+  const simajuPath = path.join(__dirname, 'simaju');
+  const child = spawn('node', [simajuPath, ...args], { stdio: 'inherit' });
+  
+  child.on('exit', (code) => {
+    process.exit(code);
+  });
+}

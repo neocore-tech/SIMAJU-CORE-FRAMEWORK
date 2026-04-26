@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database | Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/docs-styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo"><div class="logo-icon">S</div>SIMAJU CORE</a>
+    <div class="nav-links">
+      <a href="/">Beranda</a>
+      <a href="/docs/intro" class="active">Dokumentasi</a>
+      <a href="/ecosystem">Ekosistem</a>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar"></aside>
+    
+    <main class="main-content prose">
+      <section id="orm">
+        <p class="section-label">Database</p>
+        <h1>Simaju ORM</h1>
+        <p>Simaju Core menyertakan ORM berbasis <strong>Active Record</strong> yang sangat intuitif. Ini memungkinkan Anda bekerja dengan database menggunakan objek JavaScript murni.</p>
+        
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">product.model.js</span></div>
+          <pre><code><span class="token-keyword">const</span> Model = require(<span class="token-string">'../../database/model'</span>);
+
+<span class="token-keyword">class</span> Product <span class="token-keyword">extends</span> Model {
+  <span class="token-keyword">static</span> table = <span class="token-string">'products'</span>;
+}
+
+<span class="token-comment">// Penggunaan di Service</span>
+<span class="token-keyword">const</span> item = <span class="token-keyword">await</span> Product.find(101);
+item.stock += 10;
+<span class="token-keyword">await</span> item.save();</code></pre>
+        </div>
+      </section>
+
+      <section id="migrations">
+        <h2>Migrasi & Seeding</h2>
+        <p>Gunakan sistem migrasi untuk mengelola perubahan skema database secara tim dan terkontrol.</p>
+        
+        <h3>Membuat Migrasi</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">BASH</span></div>
+          <pre><code>./mji make:migration create_products_table</code></pre>
+        </div>
+
+        <h3>Menjalankan Migrasi</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">BASH</span></div>
+          <pre><code>./mji run migrate</code></pre>
+        </div>
+      </section>
+
+      <section id="query-builder">
+        <h2>Query Builder</h2>
+        <p>Jika Anda butuh query yang lebih kompleks, gunakan Query Builder yang chainable.</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span></div>
+          <pre><code><span class="token-keyword">const</span> DB = require(<span class="token-string">'./src/database'</span>);
+
+<span class="token-keyword">const</span> users = <span class="token-keyword">await</span> DB.table(<span class="token-string">'users'</span>)
+  .select(<span class="token-string">'id'</span>, <span class="token-string">'name'</span>, <span class="token-string">'email'</span>)
+  .where(<span class="token-string">'status'</span>, <span class="token-string">'active'</span>)
+  .orderBy(<span class="token-string">'created_at'</span>, <span class="token-string">'desc'</span>)
+  .limit(10)
+  .get();</code></pre>
+        </div>
+      </section>
+
+      <div class="doc-pagination">
+        <a href="/docs/basics" class="pager">
+          <span class="pager-label">Sebelumnya</span>
+          <span class="pager-title"><span class="material-symbols-outlined">arrow_back</span> Routing & Controllers</span>
+        </a>
+        <a href="/docs/security" class="pager">
+          <span class="pager-label">Selanjutnya</span>
+          <span class="pager-title">Auth & Security <span class="material-symbols-outlined">arrow_forward</span></span>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/docs-layout.js"></script>
+</body>
+</html>

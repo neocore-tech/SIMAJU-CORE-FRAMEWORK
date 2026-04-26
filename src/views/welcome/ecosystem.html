@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekosistem & Plugin | Simaju Core</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --bg: #020617;
+      --surface: #0f172a;
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid Background */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -2;
+      background-size: 40px 40px;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+
+    /* Background Animation */
+    .bg-blobs {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden;
+    }
+
+    .blob {
+      position: absolute; width: 600px; height: 600px;
+      filter: blur(120px); border-radius: 50%; opacity: 0.15;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .blob-1 { top: -10%; left: -10%; background: var(--primary); }
+    .blob-2 { bottom: -10%; right: -10%; background: #8b5cf6; animation-delay: -5s; }
+
+    /* Elegant Scroll Animations */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* Navbar */
+    nav {
+      height: 72px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; backdrop-filter: blur(12px); border-bottom: 1px solid var(--surface-border);
+      position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(2, 6, 23, 0.7);
+    }
+    .logo { 
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px; 
+      display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none;
+    }
+    .logo-icon { 
+      width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #8b5cf6); 
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white;
+    }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
+    .nav-actions .btn { padding: 8px 16px; font-size: 13px; }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 15px;
+      text-decoration: none; transition: all 0.3s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+    }
+    .btn-outline { border: 1px solid var(--surface-border); color: #fff; background: rgba(255, 255, 255, 0.03); }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--muted); }
+
+    /* Ecosystem Hero */
+    .ecosystem-hero {
+      padding: 160px 5% 80px; text-align: center;
+      max-width: 800px; margin: 0 auto;
+    }
+    .ecosystem-hero h1 {
+      font-size: clamp(36px, 6vw, 56px); font-weight: 800; line-height: 1.1;
+      margin-bottom: 24px; letter-spacing: -1.5px; color: #fff;
+    }
+    .ecosystem-hero p { font-size: 18px; color: var(--muted); line-height: 1.7; }
+    
+    .search-box {
+      margin-top: 40px; position: relative; max-width: 500px; margin-left: auto; margin-right: auto;
+    }
+    .search-box input {
+      width: 100%; padding: 18px 24px 18px 56px; border-radius: 100px;
+      background: rgba(15, 23, 42, 0.6); border: 1px solid var(--surface-border);
+      color: #fff; font-size: 16px; font-family: inherit; outline: none;
+      transition: all 0.3s ease; backdrop-filter: blur(10px);
+    }
+    .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+    .search-box .material-symbols-outlined {
+      position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--muted);
+    }
+
+    /* Filter Pills */
+    .filter-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+    .filter-pill { background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); color: var(--muted); padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .filter-pill:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: var(--muted); }
+    .filter-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 15px var(--primary-glow); }
+    
+    /* Submit Banner */
+    .submit-banner { background: rgba(15, 23, 42, 0.4); border: 1px dashed rgba(99, 102, 241, 0.5); border-radius: 20px; padding: 48px 24px; text-align: center; margin-top: 40px; transition: all 0.3s; }
+    .submit-banner:hover { border-color: var(--primary); background: rgba(15, 23, 42, 0.7); }
+    .submit-banner h3 { font-size: 24px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+    .submit-banner p { color: var(--muted); margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    /* Section Styles */
+    .section-container { padding: 40px 5% 80px; max-width: 1200px; margin: 0 auto; }
+    .section-header { margin-bottom: 40px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid var(--surface-border); padding-bottom: 16px; }
+    .section-header h2 { font-size: 28px; font-weight: 700; color: #fff; }
+    .section-header a { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .section-header a:hover { text-decoration: underline; }
+
+    /* Ecosystem Cards */
+    .plugin-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;
+    }
+    .plugin-card {
+      background: rgba(15, 23, 42, 0.4); border: 1px solid var(--surface-border);
+      border-radius: 16px; padding: 24px; transition: all 0.3s ease;
+      display: flex; flex-direction: column; height: 100%; backdrop-filter: blur(10px);
+    }
+    .plugin-card:hover {
+      border-color: rgba(99, 102, 241, 0.4); transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: rgba(15, 23, 42, 0.8);
+    }
+    .plugin-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+    .plugin-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--surface-border); color: #fff;
+    }
+    .plugin-title-wrap { flex: 1; }
+    .plugin-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+    .badge-official {
+      background: rgba(39, 201, 63, 0.1); color: #27c93f; font-size: 10px;
+      padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(39, 201, 63, 0.2);
+    }
+    .plugin-author { font-size: 13px; color: var(--muted); }
+    
+    .plugin-desc { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; flex: 1; }
+    
+    .plugin-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 16px; border-top: 1px solid var(--surface-border);
+    }
+    .plugin-stats { display: flex; gap: 16px; color: var(--muted); font-size: 13px; }
+    .plugin-stats span { display: flex; align-items: center; gap: 4px; }
+    .plugin-stats .material-symbols-outlined { font-size: 16px; }
+    
+    .install-cmd {
+      background: #000; padding: 6px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--primary); border: 1px solid var(--surface-border); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .install-cmd:hover { background: var(--surface); color: #fff; }
+
+    /* Footer */
+    footer {
+      background: #020617; border-top: 1px solid var(--surface-border);
+      padding: 80px 5% 40px; margin-top: 60px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+      max-width: 1200px; margin: 0 auto 60px;
+    }
+    .footer-brand p { color: var(--muted); font-size: 14px; margin-top: 16px; max-width: 300px; }
+    .footer-title { color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 20px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom {
+      text-align: center; padding-top: 32px; border-top: 1px solid var(--surface-border); color: var(--muted); font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .plugin-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .ecosystem-hero { padding-top: 120px; }
+      .ecosystem-hero h1 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon">S</div>
+      SIMAJU CORE
+    </a>
+    <div class="nav-links">
+      <a href="/">Beranda</a>
+      <a href="/docs">Dokumentasi</a>
+      <a href="/ecosystem" class="active">Ekosistem</a>
+      <a href="/#status">Status</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://github.com/neo/simaju-core" target="_blank" class="btn btn-outline">
+        <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
+  <header class="ecosystem-hero reveal">
+    <h1>Perluas Kemampuan <br>Aplikasi Anda</h1>
+    <p>Jelajahi ratusan plugin pihak ketiga, alat pengembangan resmi, dan integrasi mulus yang dirancang khusus untuk lingkungan Simaju Core.</p>
+    
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" placeholder="Cari plugin, modul, atau alat CLI...">
+    </div>
+
+    <div class="filter-group reveal delay-1">
+      <button class="filter-pill active">Semua</button>
+      <button class="filter-pill">Database & ORM</button>
+      <button class="filter-pill">Autentikasi</button>
+      <button class="filter-pill">Keamanan</button>
+      <button class="filter-pill">Utilitas</button>
+      <button class="filter-pill">Integrasi API</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Official Tools Section -->
+    <section class="section-container">
+      <div class="section-header reveal">
+        <h2>Alat Resmi (Official Tools)</h2>
+        <a href="#">Lihat semua alat <span class="material-symbols-outlined">arrow_forward</span></a>
+      </div>
+      
+      <div class="plugin-grid">
+        <!-- Card 1: CLI -->
+        <div class="plugin-card reveal delay-1">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #6366f1;"><span class="material-symbols-outlined">terminal</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">MJI Runner <span class="badge-official">Built-in</span></div>
+              <div class="plugin-author">oleh Core Team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Universal task runner untuk Simaju Core. Jalankan server, build, dan migrasi dengan perintah singkat './mji run'.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">verified</span> Terintegrasi</span>
+              <span>v1.0.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('./mji --help', this)">./mji --help</button>
+          </div>
+        </div>
+
+        <!-- Card 2: Migration Manager -->
+        <div class="plugin-card reveal delay-2">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #8b5cf6;"><span class="material-symbols-outlined">database</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">Migration Manager <span class="badge-official">Built-in</span></div>
+              <div class="plugin-author">oleh Core Team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Manajer migrasi otomatis yang mendukung SQLite, MySQL, PostgreSQL, dan MongoDB secara transparan dalam satu sistem.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">settings</span> Multi-DB</span>
+              <span>Stable</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('./mji run migrate', this)">./mji run migrate</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="plugin-card reveal delay-3">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #3b82f6;"><span class="material-symbols-outlined">bug_report</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">@simaju/devtools <span class="badge-official">Resmi</span></div>
+              <div class="plugin-author">oleh Tim Simaju</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Dashboard visual berbasis web untuk memantau performa rute, query database, dan debugging aplikasi secara real-time.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">download</span> 45k/bln</span>
+              <span>v1.0.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i -D @simaju/devtools', this)">npm i -D ...</button>
+          </div>
+        </div>
+
+        <!-- Card: Testing -->
+        <div class="plugin-card reveal delay-1">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #14b8a6;"><span class="material-symbols-outlined">science</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">@simaju/testing <span class="badge-official">Resmi</span></div>
+              <div class="plugin-author">oleh Tim Simaju</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Modul pengujian komprehensif yang dibungkus dengan Jest dan Supertest. Uji controller dan service Anda dengan mudah.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">download</span> 80k/bln</span>
+              <span>v2.0.1</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i -D @simaju/testing', this)">npm i -D ...</button>
+          </div>
+        </div>
+
+        <!-- Card: Mailer -> Renamed to Communication -->
+        <div class="plugin-card reveal delay-2">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #f43f5e;"><span class="material-symbols-outlined">chat</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">Communication <span class="badge-official">Built-in</span></div>
+              <div class="plugin-author">oleh Core Team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Layanan multi-channel terintegrasi untuk mengirim Email, WhatsApp, dan Telegram secara terpadu melalui satu Service API.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">send</span> WA/Mail/TG</span>
+              <span>v1.5.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('./mji run dev', this)">Siap Pakai</button>
+          </div>
+        </div>
+
+        <!-- Card: CRM Module -->
+        <div class="plugin-card reveal delay-3">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #06b6d4;"><span class="material-symbols-outlined">groups</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">CRM Module <span class="badge-official">Built-in</span></div>
+              <div class="plugin-author">oleh Core Team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Sistem manajemen pelanggan lengkap: Database Pelanggan, Sales Pipeline (Kanban), Helpdesk Ticketing, dan Log Aktivitas.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">dashboard</span> Enterprise</span>
+              <span>v1.0.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('./mji run migrate', this)">Aktifkan DB</button>
+          </div>
+        </div>
+
+        <!-- Card: LMS Module -->
+        <div class="plugin-card reveal delay-2">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #10b981;"><span class="material-symbols-outlined">school</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">LMS Module <span class="badge-official">Built-in</span></div>
+              <div class="plugin-author">oleh Core Team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Sistem E-Learning terpadu: Manajemen Kursus, Silabus Interaktif, Kuis Otomatis, dan Pelacakan Progres Siswa.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">verified</span> Education</span>
+              <span>v1.0.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('./mji run migrate', this)">Aktifkan</button>
+          </div>
+        </div>
+
+        <!-- Card: Scheduler -->
+        <div class="plugin-card reveal delay-1">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #f59e0b;"><span class="material-symbols-outlined">schedule</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">@simaju/schedule <span class="badge-official">Resmi</span></div>
+              <div class="plugin-author">oleh Tim Simaju</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Eksekusi tugas terjadwal (Cron Jobs) berbasis dekorator. Sempurna untuk tugas pembersihan database harian atau laporan mingguan.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">download</span> 55k/bln</span>
+              <span>v1.1.5</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i @simaju/schedule', this)">npm i @simaju/...</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Plugins Section -->
+    <section class="section-container" style="padding-top: 0;">
+      <div class="section-header reveal">
+        <h2>Plugin Terpopuler</h2>
+        <a href="#">Lihat direktori lengkap <span class="material-symbols-outlined">arrow_forward</span></a>
+      </div>
+      
+      <div class="plugin-grid">
+        <!-- Card 4 -->
+        <div class="plugin-card reveal delay-1">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #eab308;"><span class="material-symbols-outlined">shield_person</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-passport</div>
+              <div class="plugin-author">oleh komunitas</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Integrasi strategi autentikasi Passport.js untuk Simaju. Mendukung OAuth Google, GitHub, Facebook, dan JWT.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 1.2k</span>
+              <span>v3.0.1</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-passport', this)">npm i simaju-...</button>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="plugin-card reveal delay-2">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #ef4444;"><span class="material-symbols-outlined">memory</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-redis-cache</div>
+              <div class="plugin-author">oleh open-source</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Modul caching tingkat lanjut menggunakan Redis. Sediakan anotasi `@Cache()` langsung pada controller Anda.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 850</span>
+              <span>v2.2.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-redis-cache', this)">npm i simaju-...</button>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="plugin-card reveal delay-3">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #10b981;"><span class="material-symbols-outlined">payments</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-midtrans</div>
+              <div class="plugin-author">oleh dev-indo</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Wrapper resmi komunitas untuk integrasi Midtrans Payment Gateway. Dilengkapi webhook handler siap pakai.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 520</span>
+              <span>v1.1.4</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-midtrans', this)">npm i simaju-...</button>
+          </div>
+        </div>
+
+        <!-- Card: GraphQL -->
+        <div class="plugin-card reveal delay-1">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #e11d48;"><span class="material-symbols-outlined">hub</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-graphql</div>
+              <div class="plugin-author">oleh open-source</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Server Apollo GraphQL yang terintegrasi secara native. Ubah entitas ORM Anda menjadi schema GraphQL dalam hitungan detik.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 2.1k</span>
+              <span>v2.5.0</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-graphql', this)">npm i simaju-...</button>
+          </div>
+        </div>
+
+        <!-- Card: WebSockets -->
+        <div class="plugin-card reveal delay-2">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #0ea5e9;"><span class="material-symbols-outlined">cell_tower</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-websocket</div>
+              <div class="plugin-author">oleh dev-indo</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Gateway WebSockets berbasis Socket.io dengan sistem namespace, room, dan middleware autentikasi yang elegan.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 1.5k</span>
+              <span>v1.8.2</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-websocket', this)">npm i simaju-...</button>
+          </div>
+        </div>
+
+        <!-- Card: Logger -->
+        <div class="plugin-card reveal delay-3">
+          <div class="plugin-header">
+            <div class="plugin-icon" style="color: #22c55e;"><span class="material-symbols-outlined">list_alt</span></div>
+            <div class="plugin-title-wrap">
+              <div class="plugin-title">simaju-pino-logger</div>
+              <div class="plugin-author">oleh logger-team</div>
+            </div>
+          </div>
+          <div class="plugin-desc">
+            Pencatatan log (logging) dengan performa sangat tinggi berbasis Pino. Output format JSON untuk ElasticSearch/Kibana.
+          </div>
+          <div class="plugin-footer">
+            <div class="plugin-stats">
+              <span><span class="material-symbols-outlined">star</span> 920</span>
+              <span>v1.0.4</span>
+            </div>
+            <button class="install-cmd" onclick="copyText('npm i simaju-pino-logger', this)">npm i simaju-...</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Submit Plugin Banner Section -->
+    <section class="section-container reveal" style="padding-top: 20px; padding-bottom: 20px;">
+      <div class="submit-banner">
+        <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;">library_add</span>
+        <h3>Punya Plugin Buatan Sendiri?</h3>
+        <p>Bantu ekosistem Simaju Core tumbuh! Publikasikan plugin, middleware, atau modul buatan Anda ke direktori resmi agar dapat digunakan oleh ribuan pengembang lain.</p>
+        <a href="#" class="btn btn-primary" style="padding: 12px 32px;">
+          Kirim Plugin Sekarang <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="section-container reveal" style="padding-top: 40px; padding-bottom: 120px;">
+      <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9)); border: 1px solid var(--primary-glow); border-radius: 24px; padding: 48px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: var(--primary); filter: blur(100px); opacity: 0.2;"></div>
+        
+        <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 16px; color: #fff;">Bergabung dengan Komunitas</h2>
+        <p style="color: var(--muted); max-width: 600px; margin: 0 auto 32px; font-size: 16px;">
+          Simaju dikembangkan oleh komunitas yang luar biasa. Bergabunglah dengan ribuan pengembang lain di server Discord kami untuk berdiskusi, bertanya, atau berkontribusi!
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="#" class="btn btn-primary">
+            <span class="material-symbols-outlined">forum</span> Server Discord
+          </a>
+          <a href="#" class="btn btn-outline">
+            <span class="material-symbols-outlined">code_blocks</span> Panduan Kontribusi
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="reveal">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <div class="logo-icon" style="width: 24px; height: 24px; font-size: 12px;">S</div>
+          SIMAJU
+        </a>
+        <p>Framework modular inovatif yang menyederhanakan pengembangan backend Node.js untuk startup dan enterprise.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Framework</h4>
+        <ul class="footer-links">
+          <li><a href="/docs">Mulai Cepat</a></li>
+          <li><a href="/docs">Dokumentasi API</a></li>
+          <li><a href="#">Panduan Migrasi</a></li>
+          <li><a href="#">Keamanan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Ekosistem</h4>
+        <ul class="footer-links">
+          <li><a href="#">CLI Tool</a></li>
+          <li><a href="#">Plugin Resmi</a></li>
+          <li><a href="#">Simaju ORM</a></li>
+          <li><a href="#">Integrasi Cloud</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Komunitas</h4>
+        <ul class="footer-links">
+          <li><a href="#">GitHub Repo</a></li>
+          <li><a href="#">Discord Server</a></li>
+          <li><a href="#">Blog & Artikel</a></li>
+          <li><a href="#">Kontribusi</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Simaju Framework Core. Dibangun dengan cinta untuk ekosistem Node.js.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Copy function using execCommand for iFrame compatibility
+    function copyText(text, btnElement) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        document.execCommand('copy');
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "Tersalin!";
+        btnElement.style.color = "#27c93f";
+        btnElement.style.borderColor = "#27c93f";
+        
+        setTimeout(() => {
+          btnElement.innerText = originalText;
+          btnElement.style.color = "";
+          btnElement.style.borderColor = "";
+        }, 2000);
+      } catch (err) {
+        console.error('Gagal menyalin: ', err);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+
+    // Intersection Observer for scroll animations
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal').forEach(element => {
+        observer.observe(element);
+      });
+    });
+  </script>
+</body>
+</html>

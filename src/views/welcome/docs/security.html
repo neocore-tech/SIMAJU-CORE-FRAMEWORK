@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keamanan | Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/docs-styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo"><div class="logo-icon">S</div>SIMAJU CORE</a>
+    <div class="nav-links">
+      <a href="/">Beranda</a>
+      <a href="/docs/intro" class="active">Dokumentasi</a>
+      <a href="/ecosystem">Ekosistem</a>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar"></aside>
+    
+    <main class="main-content prose">
+      <section id="auth">
+        <p class="section-label">Keamanan</p>
+        <h1>Otentikasi (Auth)</h1>
+        <p>Simaju Core menyediakan sistem otentikasi berbasis <strong>API Key</strong> dan <strong>JWT</strong>. Anda dapat mengaktifkannya melalui middleware pada route tertentu.</p>
+        
+        <h3>Menggunakan Middleware Auth</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">user.route.js</span></div>
+          <pre><code><span class="token-keyword">const</span> auth = require(<span class="token-string">'../../middlewares/auth.middleware'</span>);
+
+<span class="token-comment">// Semua rute di bawah ini memerlukan validasi</span>
+router.use(auth);
+
+router.get(<span class="token-string">'/me'</span>, UserController.profile);</code></pre>
+        </div>
+      </section>
+
+      <section id="rbac">
+        <h2>Otorisasi (RBAC)</h2>
+        <p>Gunakan sistem Role-Based Access Control untuk membatasi aksi berdasarkan tingkat akses pengguna.</p>
+        
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span></div>
+          <pre><code><span class="token-keyword">const</span> authorize = (roles) => (req, res, next) => {
+  <span class="token-keyword">if</span> (!roles.includes(req.user.role)) {
+    <span class="token-keyword">return</span> res.status(403).json({ error: <span class="token-string">'Forbidden'</span> });
+  }
+  next();
+};
+
+router.delete(<span class="token-string">'/:id'</span>, authorize([<span class="token-string">'admin'</span>]), ProductController.delete);</code></pre>
+        </div>
+      </section>
+
+      <section id="api">
+        <h2>Keamanan API</h2>
+        <p>Simaju Core secara otomatis menyertakan <strong>Helmet.js</strong> dan perlindungan dasar terhadap CSRF serta pembatasan Rate Limiting untuk mencegah serangan Brute Force.</p>
+        
+        <div class="callout warning">
+          <span class="material-symbols-outlined">warning</span>
+          <p><strong>Penting:</strong> Selalu gunakan HTTPS di lingkungan produksi dan simpan <code>JWT_SECRET</code> Anda di dalam file <code>.env</code> yang aman.</p>
+        </div>
+      </section>
+
+      <div class="doc-pagination">
+        <a href="/docs/database" class="pager">
+          <span class="pager-label">Sebelumnya</span>
+          <span class="pager-title"><span class="material-symbols-outlined">arrow_back</span> Simaju ORM</span>
+        </a>
+        <a href="/docs/advanced" class="pager">
+          <span class="pager-label">Selanjutnya</span>
+          <span class="pager-title">Services & Logic <span class="material-symbols-outlined">arrow_forward</span></span>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/docs-layout.js"></script>
+</body>
+</html>

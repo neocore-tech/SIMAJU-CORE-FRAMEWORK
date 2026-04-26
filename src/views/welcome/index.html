@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simaju Core — Next Generation Framework</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Google Material Symbols (Professional Icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.4);
+      --secondary-glow: rgba(139, 92, 246, 0.3);
+      --bg: #020617;
+      --surface: #0f172a;
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid Background */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -2;
+      background-size: 40px 40px;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+
+    /* Background Animation */
+    .bg-blobs {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; overflow: hidden;
+    }
+
+    .blob {
+      position: absolute; width: 600px; height: 600px;
+      filter: blur(120px); border-radius: 50%; opacity: 0.15;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .blob-1 { top: -10%; left: -10%; background: var(--primary); }
+    .blob-2 { bottom: -10%; right: -10%; background: #8b5cf6; animation-delay: -5s; }
+    .blob-3 { top: 40%; left: 40%; background: #3b82f6; opacity: 0.1; animation-duration: 25s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(80px, 60px) scale(1.1); }
+    }
+
+    /* Elegant Scroll Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Animation Delays for staggered effect */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
+    .delay-5 { transition-delay: 0.5s; }
+    .delay-6 { transition-delay: 0.6s; }
+
+    /* Navbar */
+    nav {
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface-border);
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(2, 6, 23, 0.7);
+    }
+
+    .logo { 
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px; 
+      display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none;
+    }
+    .logo-icon { 
+      width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), #8b5cf6); 
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; 
+      font-size: 16px; color: white;
+    }
+
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 15px;
+      text-decoration: none; transition: all 0.3s ease;
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .btn-primary {
+      background: #fff; color: #020617; box-shadow: 0 4px 20px var(--primary-glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--primary-glow); background: #f8fafc; }
+    
+    .btn-outline {
+      border: 1px solid var(--surface-border); color: #fff; background: rgba(255, 255, 255, 0.03);
+    }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--muted); }
+
+    .nav-actions .btn { padding: 8px 16px; font-size: 13px; }
+
+    /* Hero Section */
+    .hero {
+      padding: 160px 5% 80px;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .badge {
+      background: rgba(99, 102, 241, 0.1); color: var(--primary);
+      padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      border: 1px solid rgba(99, 102, 241, 0.2); margin-bottom: 24px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .badge span.material-symbols-outlined { font-size: 16px; }
+
+    h1 {
+      font-size: clamp(40px, 7vw, 72px); font-weight: 800; line-height: 1.1;
+      margin-bottom: 24px; letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff 30%, #94a3b8);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 640px; font-size: 18px; color: var(--muted);
+      margin-bottom: 40px; font-weight: 400; line-height: 1.7;
+    }
+
+    /* Terminal Quick Start */
+    .quick-start {
+      margin-top: 48px;
+      background: #000;
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .qs-prompt { color: var(--primary); }
+    .qs-command { color: #fff; }
+    .qs-copy { 
+      color: var(--muted); cursor: pointer; transition: 0.2s; 
+      display: flex; align-items: center; background: none; border: none; padding: 4px;
+    }
+    .qs-copy:hover { color: #fff; }
+
+    /* Code Preview Section */
+    .preview-section {
+      margin-top: 80px;
+      width: 100%;
+      max-width: 1000px;
+      perspective: 1000px;
+    }
+    .editor-window {
+      background: #0d1117;
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transform: rotateX(2deg);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: float-subtle 8s ease-in-out infinite;
+    }
+    @keyframes float-subtle {
+      0% { transform: translateY(0px) rotateX(2deg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+      50% { transform: translateY(-12px) rotateX(2deg); box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.7); }
+      100% { transform: translateY(0px) rotateX(2deg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    }
+    .editor-window:hover { 
+      transform: rotateX(0deg) translateY(-5px); 
+      animation-play-state: paused;
+    }
+    .editor-header {
+      background: #161b22; padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+    .mac-close { background: #ff5f56; }
+    .mac-min { background: #ffbd2e; }
+    .mac-max { background: #27c93f; }
+    .editor-title {
+      margin-left: auto; margin-right: auto;
+      color: var(--muted); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+    }
+    .editor-body {
+      padding: 24px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .token-keyword { color: #ff7b72; }
+    .token-function { color: #d2a8ff; }
+    .token-string { color: #a5d6ff; }
+    .token-comment { color: #8b949e; }
+    .token-decorator { color: #79c0ff; }
+
+    /* Features Grid */
+    .section-title {
+      text-align: center; margin: 120px 0 48px;
+    }
+    .section-title h2 { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+    .section-title p { color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 5%;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--surface-border);
+      border-radius: 20px; padding: 32px; text-align: left;
+      transition: all 0.4s ease; backdrop-filter: blur(10px);
+    }
+    .card:hover {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .card-icon {
+      width: 48px; height: 48px; background: rgba(99, 102, 241, 0.1);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      transition: all 0.3s ease;
+    }
+    .card:hover .card-icon { transform: scale(1.1); background: rgba(99, 102, 241, 0.2); }
+    .card-icon .material-symbols-outlined { font-size: 26px; }
+
+    .card h3 { font-size: 18px; margin-bottom: 12px; font-weight: 700; color: #fff; }
+    .card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* Status Board */
+    .status-board {
+      background: rgba(15, 23, 42, 0.6); border: 1px solid var(--surface-border);
+      border-radius: 20px; max-width: 800px; margin: 0 auto; padding: 32px;
+      backdrop-filter: blur(10px);
+    }
+    .status-header {
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--surface-border);
+    }
+    .status-indicator {
+      display: flex; align-items: center; gap: 12px; color: #27c93f; font-weight: 600; font-size: 18px;
+    }
+    .status-dot {
+      width: 12px; height: 12px; background: #27c93f; border-radius: 50%; 
+      box-shadow: 0 0 12px #27c93f; animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+      0% { box-shadow: 0 0 0 0 rgba(39, 201, 63, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(39, 201, 63, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(39, 201, 63, 0); }
+    }
+    .status-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;
+    }
+    .status-item {
+      background: rgba(2, 6, 23, 0.5); padding: 20px; border-radius: 12px; 
+      border: 1px solid var(--surface-border); display: flex; flex-direction: column; gap: 8px;
+    }
+    .status-item h4 { color: var(--muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .status-item p { color: #fff; font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .status-item p span.material-symbols-outlined { color: var(--primary); font-size: 24px; }
+
+    /* Stats Section */
+    .stats {
+      display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;
+      margin: 100px auto 0; padding: 60px 5%;
+      border-top: 1px solid var(--surface-border);
+      max-width: 1000px;
+    }
+    .stat-item { text-align: center; }
+    .stat-value { display: block; font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); font-weight: 600; }
+
+    /* Footer */
+    footer {
+      background: #020617; border-top: 1px solid var(--surface-border);
+      padding: 80px 5% 40px; margin-top: 100px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+      max-width: 1200px; margin: 0 auto 60px;
+    }
+    .footer-brand p { color: var(--muted); font-size: 14px; margin-top: 16px; max-width: 300px; }
+    .footer-title { color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 20px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-bottom {
+      text-align: center; padding-top: 32px; border-top: 1px solid var(--surface-border);
+      color: var(--muted); font-size: 14px;
+    }
+
+    @media (max-width: 992px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .stats { gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 40px; }
+      .nav-links { display: none; }
+      .hero { padding-top: 120px; }
+      .cta-group { flex-direction: column; width: 100%; max-width: 300px; }
+      .quick-start { width: 100%; max-width: 300px; justify-content: space-between; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .editor-body { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">S</div>
+      SIMAJU CORE
+    </a>
+    <div class="nav-links">
+      <a href="#features">Fitur</a>
+      <a href="/docs">Dokumentasi</a>
+      <a href="/ecosystem">Ekosistem</a>
+      <a href="#status">Status Sistem</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://github.com/neo/simaju-core" target="_blank" class="btn btn-outline">
+        <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="hero">
+    <div class="badge reveal delay-1">
+      <span class="material-symbols-outlined">api</span>
+      Framework Node.js Generasi Berikutnya
+    </div>
+    <h1 class="reveal delay-2">Arsitektur Masa Depan <br> untuk Aplikasi Anda</h1>
+    <p class="reveal delay-3">Simaju Core adalah framework modular yang tangguh, siap untuk SaaS, dan <i>Database Agnostic</i>. Bangun dan skalakan aplikasi impian Anda tanpa hambatan teknis.</p>
+    
+    <div class="cta-group reveal delay-4" style="display: flex; gap: 16px;">
+      <a href="#features" class="btn btn-primary">
+        Mulai Sekarang
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </a>
+      <a href="/docs" class="btn btn-outline">Baca Dokumentasi</a>
+    </div>
+
+    <!-- Quick Start Terminal -->
+    <div class="quick-start reveal delay-5">
+      <span class="qs-prompt">$</span>
+      <span class="qs-command" id="install-cmd">./install.sh</span>
+      <button class="qs-copy" onclick="copyCmd()" title="Copy to clipboard">
+        <span class="material-symbols-outlined" id="copy-icon">content_copy</span>
+      </button>
+    </div>
+
+    <!-- Code Preview -->
+    <div class="preview-section reveal delay-6">
+      <div class="editor-window">
+        <div class="editor-header">
+          <div class="mac-btn mac-close"></div>
+          <div class="mac-btn mac-min"></div>
+          <div class="mac-btn mac-max"></div>
+          <div class="editor-title">src/controllers/user.controller.ts</div>
+        </div>
+        <div class="editor-body">
+<pre><code><span class="token-keyword">import</span> { <span class="token-function">Controller</span>, <span class="token-function">Get</span>, <span class="token-function">UseAuth</span> } <span class="token-keyword">from</span> <span class="token-string">'@simaju/core'</span>;
+<span class="token-keyword">import</span> { <span class="token-function">UserService</span> } <span class="token-keyword">from</span> <span class="token-string">'../services/user.service'</span>;
+
+<span class="token-decorator">@Controller</span>(<span class="token-string">'/api/users'</span>)
+<span class="token-keyword">export class</span> UserController {
+  <span class="token-keyword">constructor</span>(<span class="token-keyword">private</span> userService: UserService) {}
+
+  <span class="token-comment">// Mengambil data pengguna yang sedang login</span>
+  <span class="token-decorator">@Get</span>(<span class="token-string">'/me'</span>)
+  <span class="token-decorator">@UseAuth</span>()
+  <span class="token-keyword">async</span> <span class="token-function">getProfile</span>(req) {
+    <span class="token-keyword">return await</span> <span class="token-keyword">this</span>.userService.<span class="token-function">findById</span>(req.user.id);
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Features Grid -->
+  <section id="features">
+    <div class="section-title reveal">
+      <h2>Mengapa Memilih Simaju?</h2>
+      <p>Dibangun dari pengalaman nyata dalam menangani aplikasi skala besar, Simaju menyediakan semua yang Anda butuhkan secara langsung (Out-of-the-box).</p>
+    </div>
+
+    <div class="features">
+      <div class="card reveal delay-1">
+        <div class="card-icon"><span class="material-symbols-outlined">database</span></div>
+        <h3>Multi-DB Migration</h3>
+        <p>Sistem migrasi otomatis yang mendukung MySQL, PostgreSQL, SQLite, dan MongoDB secara native dengan perintah CLI.</p>
+      </div>
+      <div class="card reveal delay-2">
+        <div class="card-icon"><span class="material-symbols-outlined">bug_report</span></div>
+        <h3>Pretty Error Page</h3>
+        <p>Pengalaman debugging premium dengan tampilan error bergaya Laravel Ignition yang menunjukkan snippet kode bermasalah.</p>
+      </div>
+      <div class="card reveal delay-3">
+        <div class="card-icon"><span class="material-symbols-outlined">domain</span></div>
+        <h3>SaaS & Multi-Tenant</h3>
+        <p>Middleware identifikasi tenant dan autentikasi API Key sudah tertanam untuk membangun aplikasi SaaS skala besar.</p>
+      </div>
+      <div class="card reveal delay-1">
+        <div class="card-icon"><span class="material-symbols-outlined">database</span></div>
+        <h3>Database Agnostic</h3>
+        <p>Gunakan PostgreSQL, MySQL, atau MongoDB. Simaju memiliki lapisan abstraksi data yang membuat perpindahan database menjadi mulus.</p>
+      </div>
+      <div class="card reveal delay-2">
+        <div class="card-icon"><span class="material-symbols-outlined">code_blocks</span></div>
+        <h3>First-Class TypeScript</h3>
+        <p>Dukungan tipe data end-to-end yang ketat. Nikmati pengalaman autocompletion yang sempurna di editor favorit Anda.</p>
+      </div>
+      <div class="card reveal delay-3">
+        <div class="card-icon"><span class="material-symbols-outlined">school</span></div>
+        <h3>LMS & E-Learning</h3>
+        <p>Sistem manajemen pembelajaran lengkap dengan Course Builder, Kuis Interaktif, dan Sertifikat Otomatis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Documentation Section -->
+  <section id="docs">
+    <div class="section-title reveal">
+      <h2>Dokumentasi Resmi</h2>
+      <p>Pelajari cara menggunakan Simaju Core dari dasar hingga tingkat mahir melalui panduan komprehensif kami.</p>
+    </div>
+
+    <div class="features">
+      <div class="card reveal delay-1">
+        <div class="card-icon"><span class="material-symbols-outlined">menu_book</span></div>
+        <h3>Panduan Memulai</h3>
+        <p>Pelajari langkah-langkah dasar instalasi, konfigurasi, dan pembuatan rute pertama Anda dalam hitungan menit.</p>
+        <a href="/docs" class="btn btn-outline" style="margin-top: 20px; width: 100%; justify-content: center; font-size: 14px;">Baca Panduan</a>
+      </div>
+      <div class="card reveal delay-2">
+        <div class="card-icon"><span class="material-symbols-outlined">api</span></div>
+        <h3>Referensi API</h3>
+        <p>Dokumentasi mendalam mengenai setiap modul, kelas, dan fungsi yang tersedia di dalam ekosistem Simaju Core.</p>
+        <a href="/docs" class="btn btn-outline" style="margin-top: 20px; width: 100%; justify-content: center; font-size: 14px;">Jelajahi API</a>
+      </div>
+      <div class="card reveal delay-3">
+        <div class="card-icon"><span class="material-symbols-outlined">architecture</span></div>
+        <h3>Arsitektur Inti</h3>
+        <p>Pahami bagaimana sistem DI (Dependency Injection) dan siklus hidup (lifecycle) aplikasi Simaju bekerja di bawah kap.</p>
+        <a href="/docs" class="btn btn-outline" style="margin-top: 20px; width: 100%; justify-content: center; font-size: 14px;">Pelajari Arsitektur</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ecosystem Section -->
+  <section id="ecosystem">
+    <div class="section-title reveal">
+      <h2>Ekosistem & Alat Terintegrasi</h2>
+      <p>Tingkatkan produktivitas Anda dengan serangkaian alat resmi yang dirancang khusus untuk bekerja mulus dengan Simaju.</p>
+    </div>
+
+    <div class="features">
+      <div class="card reveal delay-1">
+        <div class="card-icon"><span class="material-symbols-outlined">terminal</span></div>
+        <h3>Simaju CLI</h3>
+        <p>Generator kode otomatis untuk membuat modul, controller, service, dan skrip migrasi dengan satu perintah terminal.</p>
+      </div>
+      <div class="card reveal delay-2">
+        <div class="card-icon"><span class="material-symbols-outlined">table_chart</span></div>
+        <h3>Simaju ORM</h3>
+        <p>Object-Relational Mapping (ORM) bawaan yang ringan dengan dukungan TypeScript penuh untuk query database yang aman.</p>
+      </div>
+      <div class="card reveal delay-3">
+        <div class="card-icon"><span class="material-symbols-outlined">extension</span></div>
+        <h3>Direktori Plugin</h3>
+        <p>Ratusan plugin pihak ketiga untuk integrasi pembayaran, pengiriman email, analitik, dan banyak lagi yang siap digunakan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- System Status Section -->
+  <section id="status" style="padding: 0 5%; margin-top: 120px;">
+    <div class="section-title reveal" style="margin-top: 0;">
+      <h2>Status Sistem & Pemantauan</h2>
+      <p>Transparansi penuh mengenai keandalan layanan infrastruktur Simaju.</p>
+    </div>
+
+    <div class="status-board reveal delay-1">
+      <div class="status-header">
+        <div>
+          <h3 style="color: #fff; font-size: 20px; margin-bottom: 4px;">Status Jaringan Global</h3>
+          <p style="color: var(--muted); font-size: 14px;">Pembaruan terakhir: Baru saja</p>
+        </div>
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          Semua Sistem Operasional
+        </div>
+      </div>
+      <div class="status-grid">
+        <div class="status-item reveal delay-2">
+          <h4>Waktu Aktif (Uptime)</h4>
+          <p><span class="material-symbols-outlined">verified</span> 99.99%</p>
+        </div>
+        <div class="status-item reveal delay-3">
+          <h4>Latensi API (Global)</h4>
+          <p><span class="material-symbols-outlined">speed</span> 24ms</p>
+        </div>
+        <div class="status-item reveal delay-4">
+          <h4>Layanan Database</h4>
+          <p style="color: #27c93f; font-size: 18px;"><span class="material-symbols-outlined" style="color: #27c93f;">dns</span> Normal</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-item reveal delay-1">
+      <span class="stat-value">4.0+</span>
+      <span class="stat-label">DB Engines</span>
+    </div>
+    <div class="stat-item reveal delay-2">
+      <span class="stat-value">30+</span>
+      <span class="stat-label">Modul Bawaan</span>
+    </div>
+    <div class="stat-item reveal delay-3">
+      <span class="stat-value">SaaS</span>
+      <span class="stat-label">Arsitektur</span>
+    </div>
+    <div class="stat-item reveal delay-4">
+      <span class="stat-value">100%</span>
+      <span class="stat-label">TypeScript</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="reveal delay-1">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <div class="logo-icon" style="width: 24px; height: 24px; font-size: 12px;">S</div>
+          SIMAJU
+        </a>
+        <p>Framework modular inovatif yang menyederhanakan pengembangan backend Node.js untuk startup dan enterprise.</p>
+      </div>
+      <div>
+        <h4 class="footer-title">Framework</h4>
+        <ul class="footer-links">
+          <li><a href="/docs">Mulai Cepat</a></li>
+          <li><a href="/docs">Dokumentasi API</a></li>
+          <li><a href="#">Panduan Migrasi</a></li>
+          <li><a href="#">Keamanan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Ekosistem</h4>
+        <ul class="footer-links">
+          <li><a href="#">CLI Tool</a></li>
+          <li><a href="#">Plugin Resmi</a></li>
+          <li><a href="#">Simaju ORM</a></li>
+          <li><a href="#">Integrasi Cloud</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-title">Komunitas</h4>
+        <ul class="footer-links">
+          <li><a href="#">GitHub Repo</a></li>
+          <li><a href="#">Discord Server</a></li>
+          <li><a href="#">Blog & Artikel</a></li>
+          <li><a href="#">Kontribusi</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Simaju Framework Core. Dibangun dengan cinta untuk ekosistem Node.js.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Copy command functionality
+    function copyCmd() {
+      const text = document.getElementById('install-cmd').innerText;
+      
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        document.execCommand('copy');
+        const icon = document.getElementById('copy-icon');
+        icon.innerText = 'check';
+        icon.style.color = '#27c93f';
+        setTimeout(() => {
+          icon.innerText = 'content_copy';
+          icon.style.color = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Gagal menyalin teks: ', err);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+        
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          e.preventDefault();
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Intersection Observer for scroll animations
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            // Unobserve to animate only once
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal').forEach(element => {
+        observer.observe(element);
+      });
+    });
+  </script>
+</body>
+</html>

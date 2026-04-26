@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengenalan | Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/docs-styles.css"> <!-- I'll create this common CSS -->
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo"><div class="logo-icon">S</div>SIMAJU CORE</a>
+    <div class="nav-links">
+      <a href="/">Beranda</a>
+      <a href="/docs/intro" class="active">Dokumentasi</a>
+      <a href="/ecosystem">Ekosistem</a>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar"></aside> <!-- Populated by docs-layout.js -->
+    
+    <main class="main-content prose">
+      <section id="intro">
+        <p class="section-label">Pengenalan</p>
+        <h1>Memulai Simaju Core</h1>
+        <p>Selamat datang di dokumentasi resmi <strong>Simaju Core Framework</strong>. Framework ini dirancang untuk mempercepat pengembangan backend Node.js dengan struktur yang robust, modular, dan siap untuk skala produksi.</p>
+        
+        <div class="callout tip">
+          <span class="material-symbols-outlined">lightbulb</span>
+          <p><strong>Tips:</strong> Jika Anda terbiasa dengan Laravel atau NestJS, Anda akan merasa sangat familiar dengan konsep modular dan arsitektur yang kami gunakan.</p>
+        </div>
+
+        <h2>Prasyarat</h2>
+        <p>Sebelum memulai, pastikan lingkungan pengembangan Anda memenuhi persyaratan berikut:</p>
+        <ul>
+          <li><strong>Node.js:</strong> Versi 18.x (LTS) atau lebih tinggi.</li>
+          <li><strong>NPM:</strong> Versi 9.x atau lebih tinggi.</li>
+          <li><strong>Database:</strong> PostgreSQL (Direkomendasikan), MySQL, atau SQLite untuk lokal.</li>
+        </ul>
+      </section>
+
+      <section id="installation">
+        <h2>Instalasi Cepat</h2>
+        <p>Gunakan langkah-langkah berikut untuk menginisiasi proyek Simaju Core di mesin lokal Anda:</p>
+        
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">BASH</span></div>
+          <pre><code># Klon direktori proyek
+cd framework-simaju-core
+
+# Instalasi semua dependensi
+npm install
+
+# Setup environment (Salin dari example)
+cp .env.example .env
+
+# Jalankan migrasi database
+./mji run migrate
+
+# Mulai server dalam mode development
+./mji run dev</code></pre>
+        </div>
+      </section>
+
+      <section id="directory">
+        <h2>Struktur Direktori</h2>
+        <p>Simaju Core mengikuti pola <strong>Modular Domain Driven Design</strong>. Berikut adalah penjelasan fungsi setiap direktori utama:</p>
+        
+        <div class="dir-structure">
+          <div class="dir-item">
+            <span class="material-symbols-outlined">folder</span>
+            <strong>src/core</strong>
+            <p>Berisi bootloader aplikasi, routing global, dan logika inti framework yang tidak boleh diubah secara sembarangan.</p>
+          </div>
+          <div class="dir-item">
+            <span class="material-symbols-outlined">folder</span>
+            <strong>src/modules</strong>
+            <p>Rumah bagi semua fitur aplikasi Anda. Setiap folder di sini adalah "Module" mandiri (seperti Auth, User, Product).</p>
+          </div>
+          <div class="dir-item">
+            <span class="material-symbols-outlined">folder</span>
+            <strong>src/database</strong>
+            <p>Berisi driver database, manager migrasi, seeder, dan definisi model ORM.</p>
+          </div>
+          <div class="dir-item">
+            <span class="material-symbols-outlined">folder</span>
+            <strong>src/middlewares</strong>
+            <p>Penyaring request global seperti autentikasi, logging, dan penanganan error (Pretty Error).</p>
+          </div>
+          <div class="dir-item">
+            <span class="material-symbols-outlined">folder</span>
+            <strong>src/config</strong>
+            <p>Semua parameter konfigurasi aplikasi tersentralisasi di sini (DB, App, Auth, dsb).</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="doc-pagination">
+        <div></div>
+        <a href="/docs/architecture" class="pager">
+          <span class="pager-label">Selanjutnya</span>
+          <span class="pager-title">Sistem Modul <span class="material-symbols-outlined">arrow_forward</span></span>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/docs-layout.js"></script>
+</body>
+</html>

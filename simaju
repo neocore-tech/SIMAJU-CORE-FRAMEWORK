@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+const command = args[0];
+
+/**
+ * Simaju CLI Tool (Bab 10 & 16)
+ * ─────────────────────────────────────────────────────────────
+ */
+
+if (!command) {
+  try {
+    const fs = require('fs');
+    const branding = fs.readFileSync(path.join(__dirname, 'name.txt'), 'utf8');
+    console.log(`\x1b[36m${branding}\x1b[0m`);
+    console.log(' \x1b[1m\x1b[35mSIMAJU CORE FRAMEWORK\x1b[0m\n');
+  } catch (e) {
+    console.log('SIMAJU CORE FRAMEWORK');
+  }
+
+  console.log(`
+  Commands:
+    make:module <name>     Create a new modular feature
+    make:migration <name>  Create a new migration file
+    db:migrate [conn]      Run pending migrations
+    db:rollback [conn]     Rollback last migration batch
+    db:ping [conn]         Check database connection
+    help                   Show this help
+  `);
+  process.exit(0);
+}
+
+const commands = {
+  'make:module': (name) => {
+    if (!name) return console.error('Error: Module name is required');
+    const modulePath = path.join(__dirname, 'src', 'modules', name);
+    
+    if (fs.existsSync(modulePath)) {
+      return console.error(`Error: Module [${name}] already exists`);
+    }
+
+    fs.mkdirSync(modulePath, { recursive: true });
+    
+    const templates = [
+      { name: `${name}.controller.js`, content: `'use strict';\n\nmodule.exports = {};` },
+      { name: `${name}.service.js`,    content: `'use strict';\n\nmodule.exports = {};` },
+      { name: `${name}.route.js`,      content: `'use strict';\n\nconst express = require('express');\nconst router = express.Router();\n\nmodule.exports = router;` },
+      { name: `${name}.validation.js`, content: `'use strict';\n\nmodule.exports = {};` },
+    ];
+
+    templates.forEach(t => {
+      fs.writeFileSync(path.join(modulePath, t.name), t.content);
+    });
+
+    console.log(`✅ Module [${name}] created successfully at src/modules/${name}`);
+  },
+
+  'make:migration': (name) => {
+    if (!name) return console.error('Error: Migration name is required');
+    const Migration = require('./src/database/migration-manager');
+    const filename = Migration.create(name);
+    console.log(`✅ Migration created: src/database/migrations/${filename}`);
+  },
+
+  'db:migrate': async (conn) => {
+    const DB = require('./src/database');
+    const config = require('./src/config/database');
+    const Migration = require('./src/database/migration-manager');
+    
+    try {
+      if (conn) config.default = conn;
+      await DB.boot(config);
+      await Migration.migrate();
+      await DB.disconnect();
+    } catch (err) {
+      console.error('❌ Migration failed:', err.message);
+      process.exit(1);
+    }
+  },
+
+  'db:rollback': async (conn) => {
+    const DB = require('./src/database');
+    const config = require('./src/config/database');
+    const Migration = require('./src/database/migration-manager');
+    
+    try {
+      if (conn) config.default = conn;
+      await DB.boot(config);
+      await Migration.rollback();
+      await DB.disconnect();
+    } catch (err) {
+      console.error('❌ Rollback failed:', err.message);
+      process.exit(1);
+    }
+  },
+
+  'db:ping': async (conn) => {
+    const DB = require('./src/database');
+    const config = require('./src/config/database');
+    try {
+      if (conn) config.default = conn;
+      await DB.boot(config);
+      const status = await DB.ping();
+      console.log('📡 Database Status:', status);
+      await DB.disconnect();
+    } catch (err) {
+      console.error('❌ Database connection failed:', err.message);
+    }
+  }
+};
+
+if (commands[command]) {
+  commands[command](args[1]);
+} else {
+  console.log(`Unknown command: ${command}`);
+}

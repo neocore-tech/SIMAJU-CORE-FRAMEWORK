@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lanjutan | Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/docs-styles.css">
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo"><div class="logo-icon">S</div>SIMAJU CORE</a>
+    <div class="nav-links">
+      <a href="/">Beranda</a>
+      <a href="/docs/intro" class="active">Dokumentasi</a>
+      <a href="/ecosystem">Ekosistem</a>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar"></aside>
+    
+    <main class="main-content prose">
+      <section id="services">
+        <p class="section-label">Lanjutan</p>
+        <h1>Services & Communication</h1>
+        <p>Simaju Core menyediakan layanan komunikasi multi-channel terintegrasi (Email, WhatsApp, Telegram).</p>
+        
+        <h3>Email Service</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">communication.service.js</span></div>
+          <pre><code><span class="token-keyword">await</span> CommunicationService.sendEmail(
+  <span class="token-string">'user@example.com'</span>, 
+  <span class="token-string">'Hello!'</span>, 
+  <span class="token-string">'This is a test email'</span>
+);</code></pre>
+        </div>
+
+        <h3>WhatsApp Integration</h3>
+        <p>Anda dapat mengirim pesan WhatsApp melalui gateway terdaftar dengan sangat mudah.</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span></div>
+          <pre><code><span class="token-keyword">await</span> CommunicationService.sendWhatsApp(
+  <span class="token-string">'628123456789'</span>, 
+  <span class="token-string">'Halo, ini notifikasi dari Simaju!'</span>
+);</code></pre>
+        </div>
+      </section>
+
+      <section id="middlewares">
+        <h2>Custom Middlewares</h2>
+        <p>Anda dapat membuat middleware kustom untuk berbagai kebutuhan seperti logging audit, transformasi data, dsb.</p>
+        
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">logger.middleware.js</span></div>
+          <pre><code>module.exports = (req, res, next) => {
+  console.log(<span class="token-string">`[${new Date().toISOString()}] ${req.method} ${req.url}`</span>);
+  next();
+};</code></pre>
+        </div>
+      </section>
+
+      <section id="logging">
+        <h2>Logging & Debug</h2>
+        <p>Simaju Core menyertakan logger tingkat industri yang mendukung level log (info, warn, error) dan rotasi file secara otomatis.</p>
+        
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">JAVASCRIPT</span></div>
+          <pre><code><span class="token-keyword">const</span> logger = require(<span class="token-string">'./src/utils/logger'</span>);
+
+logger.info(<span class="token-string">'User logged in successfully'</span>);
+logger.error({ err }, <span class="token-string">'Database connection failed'</span>);</code></pre>
+        </div>
+      </section>
+
+      <div class="doc-pagination">
+        <a href="/docs/security" class="pager">
+          <span class="pager-label">Sebelumnya</span>
+          <span class="pager-title"><span class="material-symbols-outlined">arrow_back</span> Auth & Security</span>
+        </a>
+        <div></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/docs-layout.js"></script>
+</body>
+</html>
