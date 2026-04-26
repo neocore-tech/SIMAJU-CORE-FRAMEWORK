@@ -1,138 +1,67 @@
-# SIMAJU CORE FRAMEWORK
-Next-Generation Modular Node.js Framework
+# <p align="center"><img src="src/public/images/logo-full.png" alt="Simaju Core Logo" width="400"></p>
 
-```text
-           _____                    _____                    _____                    _____                    _____                    _____                  
-         /\    \                  /\    \                  /\    \                  /\    \                  /\    \                  /\    \                 
-        /::\    \                /::\    \                /::\____\                /::\    \                /::\    \                /::\____\                
-       /::::\    \               \:::\    \              /::::|   |               /::::\    \               \:::\    \              /:::/    /                
-      /::::::\    \               \:::\    \            /:::::|   |              /::::::\    \               \:::\    \            /:::/    /                 
-     /:::/\:::\    \               \:::\    \          /::::::|   |             /:::/\:::\    \               \:::\    \          /:::/    /                  
-    /:::/__\:::\    \               \:::\    \        /:::/|::|   |            /:::/__\:::\    \               \:::\    \        /:::/    /                   
-    \:::\   \:::\    \              /::::\    \      /:::/ |::|   |           /::::\   \:::\    \              /::::\    \      /:::/    /                    
-  ___\:::\   \:::\    \    ____    /::::::\    \    /:::/  |::|___|______    /::::::\   \:::\    \    _____   /::::::\    \    /:::/    /      _____          
- /\   \:::\   \:::\    \  /\   \  /:::/\:::\    \  /:::/   |::::::::\    \  /:::/\:::\   \:::\    \  /\    \ /:::/\:::\    \  /:::/____/      /\    \         
-/::\   \:::\   \:::\____\/::\   \/:::/  \:::\____\/:::/    |:::::::::\____\/:::/  \:::\   \:::\____\/::\    /:::/  \:::\____\|:::|    /      /::\____\        
-\:::\   \:::\   \::/    /\:::\  /:::/    \::/    /\::/    / ~~~~~/:::/    /\::/    \:::\  /:::/    /\:::\  /:::/    \::/    /|:::|____\     /:::/    /        
- \:::\   \:::\   \/____/  \:::\/:::/    / \/____/  \/____/      /:::/    /  \/____/ \:::\/:::/    /  \:::\/:::/    / \/____/  \:::\    \   /:::/    /         
-  \:::\   \:::\    \       \::::::/    /                       /:::/    /            \::::::/    /    \::::::/    /            \:::\    \ /:::/    /          
-   \:::\   \:::\____\       \::::/____/                       /:::/    /              \::::/    /      \::::/    /              \:::\    /:::/    /           
-    \:::\  /:::/    /        \:::\    \                      /:::/    /               /:::/    /        \::/    /                \:::\__/:::/    /            
-     \:::\/:::/    /          \:::\    \                    /:::/    /               /:::/    /          \/____/                  \::::::::/    /             
-      \::::::/    /            \:::\    \                  /:::/    /               /:::/    /                                     \::::::/    /              
-       \::::/    /              \:::\____\                /:::/    /               /:::/    /                                       \::::/    /               
-        \::/    /                \::/    /                \::/    /                \::/    /                                         \::/____/                
-         \/____/                  \/____/                  \/____/                  \/____/                                           ~~                      
-```
+<p align="center">
+  <strong>Simaju Core Framework</strong><br>
+  <em>The Advanced Agentic Coding Framework for Modern Node.js Applications</em>
+</p>
 
-**Simaju Core** adalah framework backend Node.js yang dirancang dengan arsitektur modular tinggi, memberikan kecepatan pengembangan startup namun tetap tangguh untuk skala enterprise.
+<p align="center">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node Support">
+  <img src="https://img.shields.io/badge/license-ISC-orange.svg" alt="License">
+</p>
 
 ---
 
-## ✨ Fitur Utama
+## 🚀 Apa itu Simaju Core?
 
-### 🧩 Arsitektur Modular
-Bangun aplikasi Anda sebagai kumpulan modul yang independen. Setiap modul memiliki Controller, Service, Route, dan Model sendiri.
+**Simaju Core** adalah framework backend Node.js yang dirancang untuk kecepatan, modularitas, dan skalabilitas. Dengan sistem **Plugin Dinamis** dan **Modular Architecture**, Simaju Core memungkinkan Anda membangun aplikasi kompleks dengan struktur yang sangat rapi dan mudah dikelola.
 
-### 🏢 Enterprise CRM Module (Built-in)
-Sistem manajemen pelanggan siap pakai:
-- **Sales Pipeline**: Manajemen prospek dengan alur kerja Kanban.
-- **Helpdesk Ticketing**: Sistem dukungan pelanggan otomatis.
-- **Customer 360 View**: Riwayat lengkap aktivitas pelanggan.
+## ✨ Fitur Unggulan
 
-### 🎓 LMS & E-Learning Module (Built-in)
-Sistem manajemen pembelajaran terintegrasi:
-- **Course Builder**: Kelola kursus, modul, dan materi secara hierarkis.
-- **Progress Tracking**: Pelacakan otomatis kemajuan belajar siswa.
-- **Assessment**: Sistem kuis dan evaluasi otomatis.
+*   📦 **Modular Architecture**: Pisahkan fitur bisnis Anda ke dalam modul-modul independen (Controller, Service, Route).
+*   🔌 **Dynamic Plugin System**: Pasang dan lepas fitur tambahan (seperti Blog, Payment, WhatsApp) tanpa mengganggu kode utama.
+*   🛠️ **Powerful CLI**: Generator otomatis untuk modul, migrasi, dan instalasi plugin langsung dari Git.
+*   💾 **Multi-DB Support**: Mendukung SQLite, MySQL, dan PostgreSQL dengan migrasi terpadu.
+*   ⚡ **Agentic Ready**: Dirancang agar ramah bagi pengembangan berbasis AI dan agen coding.
+*   🎨 **Premium UI Dashboard**: Dashboard admin bawaan yang elegan untuk memantau plugin dan status sistem.
 
-### 📱 Communication Gateway
-Satu layanan untuk semua saluran:
-- **WhatsApp Integration**: Kirim notifikasi via gateway WA.
-- **Email Service**: Integrasi SMTP siap pakai.
-- **Telegram Bot**: Hubungkan aplikasi Anda dengan Telegram.
+## 🛠️ Instalasi Cepat
 
-### 🛠️ Simaju Ecosystem Tools
-- **MJI Runner**: Alat baris perintah kustom untuk menjalankan server, migrasi, dan build.
-- **Simaju CLI**: Generator kode untuk membuat modul dan migrasi secara instan.
-- **Automatic Migration**: Mendukung SQLite, PostgreSQL, dan MySQL secara native.
+Simaju Core dilengkapi dengan **Interactive Setup Wizard** untuk membantu Anda memulai dalam hitungan detik.
 
----
+1. **Clone Repositori**
+   ```bash
+   git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
+   cd SIMAJU-CORE-FRAMEWORK
+   ```
 
-## 🚀 Instalasi Cepat (One-Click)
+2. **Jalankan Setup Wizard**
+   ```bash
+   ./simaju init
+   ```
+   *Pilih database Anda, masukkan nama aplikasi, dan pilih modul dasar yang ingin diaktifkan.*
 
-Jalankan perintah ini di terminal Anda untuk mengunduh dan memasang seluruh framework secara otomatis:
+3. **Jalankan Migrasi**
+   ```bash
+   ./simaju db:migrate
+   ```
 
-```bash
-curl -sSL https://raw.githubusercontent.com/neocore-tech/SIMAJU-CORE-FRAMEWORK/main/setup.sh | bash
-```
+4. **Mulai Server**
+   ```bash
+   npm run dev
+   ```
 
-Atau instalasi manual:
+## 📖 Dokumentasi
 
-```bash
-git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
-cd simaju-core
-chmod +x install.sh
-./install.sh
-```
+Dokumentasi lengkap dapat diakses secara lokal melalui browser setelah server berjalan di:
+`http://localhost:3000/docs`
 
-Setelah instalasi selesai, jalankan server pengembangan:
+Atau baca panduan dasar di folder `Dokumentasi/`.
 
-```bash
-./mji run dev
-```
+## 🤝 Kontribusi
+
+Kami sangat terbuka untuk kontribusi modul dan plugin! Silakan kunjungi repositori [Simaju Modules](https://github.com/neocore-tech/simaju-modules) untuk berbagi modul Anda dengan komunitas.
 
 ---
-
-## 🗄️ Arsitektur Database
-
-Simaju Core menggunakan lapisan abstraksi database yang kuat, memungkinkan Anda untuk berpindah antar engine database dengan konfigurasi minimal.
-
-![Database Structure](src/public/images/readme/db-structure.png)
-
-### Struktur Folder Database:
-- **`src/database/migrations/`**: Menyimpan file histori perubahan skema database. Setiap file menggunakan timestamp untuk memastikan urutan eksekusi yang benar.
-- **`src/database/drivers/`**: Berisi driver khusus untuk SQLite, PostgreSQL, dan MySQL. Sistem akan memilih driver secara otomatis berdasarkan konfigurasi `.env`.
-- **`src/database/model.js`**: Base class untuk ORM Simaju. Memberikan fungsionalitas Active Record (all, find, create, update, delete) pada setiap model Anda.
-
----
-
-## 🏗️ Struktur Direktori Lengkap
-
-```text
-├── src/
-│   ├── config/          # Konfigurasi sistem (DB, Env, Auth)
-│   ├── core/            # Inti framework (Kernel, Router, App)
-│   ├── database/        # Migrasi, Driver, dan Model Base
-│   ├── middlewares/     # Auth, Logging, RBAC, Rate Limiter
-│   ├── modules/         # Modular Business Logic (Auth, CRM, LMS, dll)
-│   ├── public/          # Aset statis (CSS, JS, Images)
-│   ├── utils/           # Helper functions (Hash, JWT, Whatsapp)
-│   └── views/           # Template HTML & Dokumentasi
-├── mji                  # Custom Command Runner
-├── simaju               # Core CLI Tool
-└── index.js             # Main Entry Point
-```
-
----
-
-## 🛠️ Teknologi yang Digunakan
-
-- **Runtime**: Node.js
-- **Framework**: Express.js (Core)
-- **Database**: Knex-like Query Builder (Custom Model)
-- **Auth**: JWT (JSON Web Token) & bcrypt
-- **Styles**: Vanilla CSS dengan desain modern premium
-- **Documentation**: Built-in multi-page documentation system
-
----
-
-## 📜 Lisensi
-
-Proyek ini dilisensikan di bawah **Simaju Core Framework License** (Bilingual: ID/ENG). Anda diperbolehkan untuk menggunakan, memodifikasi, dan mendistribusikan perangkat lunak ini dengan syarat tetap menyertakan atribusi sumber utama.
-
-Lihat file [LICENSE](LICENSE) untuk detail lengkap.
-
----
-
-**Dikembangkan oleh [Ilham Permana](https://github.com/neocore-tech)**
+<p align="center">Built with ❤️ by <b>Simaju Core Team</b></p>
