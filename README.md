@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>Simaju Core Framework</strong><br>
-  <em>The Advanced Agentic Coding Framework for Modern Node.js Applications</em>
+  <em>The Advanced Agentic Coding Framework for Modern Backend Applications</em>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 ## 🚀 Apa itu Simaju Core?
 
-**Simaju Core** adalah framework backend Node.js yang dirancang untuk kecepatan, modularitas, dan skalabilitas. Dengan sistem **Plugin Dinamis** dan **Modular Architecture**, Simaju Core memungkinkan Anda membangun aplikasi kompleks dengan struktur yang sangat rapi dan mudah dikelola.
+**Simaju Core** adalah framework backend modern yang dirancang untuk kecepatan, modularitas, dan skalabilitas. Dengan sistem **Plugin Dinamis** dan **Modular Architecture**, Simaju Core memungkinkan Anda membangun aplikasi kompleks dengan struktur yang sangat rapi dan mudah dikelola.
 
 ## ✨ Fitur Unggulan
 

@@ -14,7 +14,7 @@ Identitas visual harus mampu mengomunikasikan empat pilar utama Simaju Core:
 * **Modularitas**: Kemampuan untuk dibongkar-pasang (Plugin & Module).
 * **Stabilitas**: Keamanan tingkat enterprise yang bisa diandalkan.
 * **Kecepatan**: Performa tinggi dan pengembangan yang instan (CLI).
-* **Modernitas**: Mengikuti standar teknologi terbaru di ekosistem Node.js.
+* **Modernitas**: Mengikuti standar teknologi terbaru di ekosistem Simaju Engine.
 
 ## 3. Konsep Visual Logo (Acuan)
 
