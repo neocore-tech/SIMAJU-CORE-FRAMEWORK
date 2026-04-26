@@ -41,7 +41,6 @@ if (command === 'run') {
       });
       break;
     
-    case 'bilid':
     case 'build':
       console.log('🏗️ Building Simaju Application...');
       console.log('📦 Optimizing assets...');

@@ -59,12 +59,18 @@ Satu layanan untuk semua saluran:
 
 ---
 
-## 🚀 Instalasi Cepat
+## 🚀 Instalasi Cepat (One-Click)
 
-Gunakan skrip instalasi otomatis untuk menyiapkan proyek dalam hitungan detik:
+Jalankan perintah ini di terminal Anda untuk mengunduh dan memasang seluruh framework secara otomatis:
 
 ```bash
-git clone https://github.com/username/simaju-core.git
+curl -sSL https://raw.githubusercontent.com/neocore-tech/SIMAJU-CORE-FRAMEWORK/main/setup.sh | bash
+```
+
+Atau instalasi manual:
+
+```bash
+git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
 cd simaju-core
 chmod +x install.sh
 ./install.sh
@@ -129,4 +135,4 @@ Lihat file [LICENSE](LICENSE) untuk detail lengkap.
 
 ---
 
-**Dikembangkan oleh [Ilham Permana](https://github.com/ilhampermana)**
+**Dikembangkan oleh [Ilham Permana](https://github.com/neocore-tech)**
