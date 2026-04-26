@@ -29,6 +29,9 @@ if (!command) {
     db:migrate [conn]      Run pending migrations
     db:rollback [conn]     Rollback last migration batch
     db:ping [conn]         Check database connection
+    plugin:install <url>   Install a plugin from Git
+    plugin:list            List all installed plugins
+    plugin:migrate <name>  Run migrations for a specific plugin
     help                   Show this help
   `);
   process.exit(0);
@@ -109,6 +112,68 @@ const commands = {
       await DB.disconnect();
     } catch (err) {
       console.error('❌ Database connection failed:', err.message);
+    }
+  },
+  
+  'plugin:install': (url) => {
+    if (!url) return console.error('Error: Plugin Git URL is required');
+    const { spawnSync } = require('child_process');
+    const pluginName = path.basename(url, '.git');
+    const targetPath = path.join(__dirname, 'src', 'plugins', pluginName);
+
+    console.log(`🚀 Installing plugin [${pluginName}]...`);
+    const result = spawnSync('git', ['clone', url, targetPath], { stdio: 'inherit' });
+
+    if (result.status === 0) {
+      console.log(`✅ Plugin [${pluginName}] installed successfully.`);
+    } else {
+      console.error(`❌ Failed to install plugin [${pluginName}].`);
+    }
+  },
+
+  'plugin:list': () => {
+    const PluginManager = require('./src/core/plugin-manager');
+    const plugins = PluginManager.getInstalledPlugins();
+    
+    if (plugins.length === 0) {
+      console.log('No plugins installed.');
+      return;
+    }
+
+    console.log('\x1b[1m\x1b[32mInstalled Plugins:\x1b[0m');
+    plugins.forEach(p => {
+      console.log(`- ${p.name} (v${p.version})`);
+    });
+  },
+
+  'plugin:migrate': async (name) => {
+    if (!name) return console.error('Error: Plugin name is required');
+    const pluginPath = path.join(__dirname, 'src', 'plugins', name);
+    const migrationPath = path.join(pluginPath, 'migrations');
+
+    if (!fs.existsSync(migrationPath)) {
+      return console.error(`Error: Plugin [${name}] does not have a migrations folder`);
+    }
+
+    const DB = require('./src/database');
+    const config = require('./src/config/database');
+    const Migration = require('./src/database/migration-manager');
+    
+    try {
+      console.log(`🗄️ Running migrations for plugin [${name}]...`);
+      await DB.boot(config);
+      // We temporarily change the migration directory
+      const originalPath = Migration.migrationsPath;
+      Migration.migrationsPath = migrationPath;
+      
+      await Migration.migrate();
+      
+      Migration.migrationsPath = originalPath;
+      await DB.disconnect();
+      console.log(`✅ Plugin [${name}] migrations completed.`);
+    } catch (err) {
+      console.error(`❌ Plugin [${name}] migration failed:`, err.message);
+      process.exit(1);
     }
   }
 };
