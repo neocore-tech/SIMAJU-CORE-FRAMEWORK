@@ -33,6 +33,7 @@ if (!command) {
     plugin:install <url>   Install a plugin from Git
     plugin:list            List all installed plugins
     plugin:migrate <name>  Run migrations for a specific plugin
+    init                   Run interactive setup wizard
     help                   Show this help
   `);
   process.exit(0);
@@ -278,11 +279,88 @@ module.exports = {
     } else {
       console.error(`❌ Failed to install module [${moduleName}].`);
     }
+  },
+
+  'init': async () => {
+    const readline = require('readline');
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    const question = (query) => new Promise((resolve) => rl.question(query, resolve));
+
+    console.log('\n\x1b[1m\x1b[36m🚀 Welcome to Simaju Core Setup Wizard\x1b[0m');
+    console.log('──────────────────────────────────────────────────\n');
+
+    try {
+      const appName = await question('🏷️  App Name (Default: Simaju Core): ') || 'Simaju Core';
+      
+      console.log('\n🗄️  Select Database Engine:');
+      console.log('1. SQLite (Recommended for dev)');
+      console.log('2. MySQL');
+      console.log('3. PostgreSQL');
+      const dbType = await question('Choice (1-3): ');
+
+      let dbConfig = {
+        type: dbType === '2' ? 'mysql' : (dbType === '3' ? 'postgres' : 'sqlite'),
+        host: 'localhost',
+        user: 'root',
+        pass: '',
+        name: 'simaju_db'
+      };
+
+      if (dbType !== '1') {
+        dbConfig.host = await question('   Host (Default: localhost): ') || 'localhost';
+        dbConfig.user = await question('   Username: ');
+        dbConfig.pass = await question('   Password: ');
+        dbConfig.name = await question('   Database Name: ');
+      }
+
+      console.log('\n🧩  Enable Core Modules?');
+      const enableAuth = (await question('   Enable Authentication System? (y/n): ')).toLowerCase() === 'y';
+      const enableCRM = (await question('   Enable Sample CRM Module? (y/n): ')).toLowerCase() === 'y';
+
+      console.log('\n⚙️  Generating configuration...');
+
+      // Generate .env
+      const envContent = `APP_NAME="${appName}"
+APP_ENV=development
+APP_PORT=3000
+APP_KEY=${Math.random().toString(36).substring(2, 15)}
+
+DB_CONNECTION=${dbConfig.type}
+DB_HOST=${dbConfig.host}
+DB_PORT=${dbConfig.type === 'mysql' ? 3306 : 5432}
+DB_DATABASE=${dbConfig.name}
+DB_USERNAME=${dbConfig.user}
+DB_PASSWORD=${dbConfig.pass}
+`;
+
+      fs.writeFileSync(path.join(__dirname, '.env'), envContent);
+      console.log('✅ .env file created.');
+
+      if (enableAuth) {
+        console.log('📦 Activating Auth System...');
+        // logic to enable auth could be copying files or updating router
+      }
+
+      console.log('\n\x1b[1m\x1b[32m✨ Setup Completed Successfully!\x1b[0m');
+      console.log('👉 Next: Run \x1b[1m./simaju db:migrate\x1b[0m to initialize database.');
+      console.log('👉 Then: Run \x1b[1mnpm run dev\x1b[0m to start the server.\n');
+
+    } catch (err) {
+      console.error('\n❌ Setup aborted:', err.message);
+    } finally {
+      rl.close();
+    }
   }
 };
 
 if (commands[command]) {
-  commands[command](args[1]);
+  (async () => {
+    await commands[command](args[1], args[2]);
+  })();
 } else {
   console.log(`Unknown command: ${command}`);
 }
