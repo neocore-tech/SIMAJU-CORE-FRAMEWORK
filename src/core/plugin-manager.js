@@ -10,16 +10,24 @@ const logger = require('../utils/logger');
  * Mengelola deteksi dan pemuatan plugin secara dinamis.
  */
 class PluginManager {
-  static async boot(app) {
-    const pluginDir = path.join(__dirname, '../plugins');
+  /**
+   * Boot plugins into a router or app instance.
+   * @param {Object} target - Express App or Router instance
+   * @param {string} prefix - URL prefix (default: /plugins)
+   */
+  static boot(target, prefix = '/plugins') {
+    const pluginDir = path.resolve(__dirname, '../plugins');
     
     if (!fs.existsSync(pluginDir)) {
+      logger.warn(`⚠️ [Plugin] Directory not found: ${pluginDir}`);
       return;
     }
 
     const plugins = fs.readdirSync(pluginDir).filter(f => {
       return fs.statSync(path.join(pluginDir, f)).isDirectory();
     });
+
+    logger.info(`🔍 [Plugin] Scanning directory: ${pluginDir} (Found ${plugins.length} candidates)`);
 
     for (const pluginName of plugins) {
       try {
@@ -37,7 +45,7 @@ class PluginManager {
         const routePath = path.join(pluginPath, 'routes.js');
         if (fs.existsSync(routePath)) {
           const routes = require(routePath);
-          app.use(`/api/plugins/${pluginName}`, routes);
+          target.use(`${prefix}/${pluginName}`, routes);
         }
 
         // 3. Register Events/Hooks (Optional index.js)
@@ -45,7 +53,7 @@ class PluginManager {
         if (fs.existsSync(indexPath)) {
           const pluginInit = require(indexPath);
           if (typeof pluginInit === 'function') {
-            await pluginInit(app);
+            pluginInit(target);
           }
         }
 
@@ -57,17 +65,30 @@ class PluginManager {
   }
 
   static getInstalledPlugins() {
-    const pluginDir = path.join(__dirname, '../plugins');
-    if (!fs.existsSync(pluginDir)) return [];
+    const pluginDir = path.resolve(__dirname, '../plugins');
+    
+    if (!fs.existsSync(pluginDir)) {
+      return [];
+    }
 
     return fs.readdirSync(pluginDir).filter(f => {
       return fs.statSync(path.join(pluginDir, f)).isDirectory();
     }).map(name => {
       const configPath = path.join(pluginDir, name, 'plugin.json');
+      let metadata = { name: name, version: 'unknown' };
+      
       if (fs.existsSync(configPath)) {
-        return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        try {
+          metadata = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        } catch (e) {
+          logger.error(`❌ [Plugin] Invalid plugin.json in ${name}`);
+        }
       }
-      return { name, version: 'unknown' };
+      
+      return {
+        id: name,
+        ...metadata
+      };
     });
   }
 }

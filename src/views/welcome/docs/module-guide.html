@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Modul Internal - Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6366f1;
+      --bg: #020617;
+      --surface: #0f172a;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0; display: flex; min-height: 100vh;
+    }
+    
+    /* Sidebar Docs */
+    .docs-sidebar {
+      width: 280px; border-right: 1px solid var(--border);
+      padding: 40px 24px; position: sticky; top: 0; height: 100vh;
+      overflow-y: auto; background: rgba(15, 23, 42, 0.5);
+    }
+    .docs-nav-title { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+    .docs-nav-link { display: block; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 14px; transition: 0.2s; }
+    .docs-nav-link:hover, .docs-nav-link.active { color: #fff; }
+    .docs-nav-link.active { font-weight: 600; }
+
+    /* Main Content */
+    .docs-content { flex: 1; padding: 60px 8%; max-width: 900px; }
+    h1 { font-size: 36px; margin-bottom: 24px; letter-spacing: -1px; }
+    h2 { font-size: 24px; margin-top: 48px; margin-bottom: 16px; color: var(--primary); }
+    p { line-height: 1.8; color: var(--muted); margin-bottom: 24px; }
+    
+    .code-block {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; overflow-x: auto; margin-bottom: 32px;
+      color: #e6edf3; line-height: 1.6;
+    }
+    .keyword { color: #ff7b72; }
+    .string { color: #a5d6ff; }
+    .comment { color: #8b949e; }
+
+    .highlight-box {
+      background: rgba(99, 102, 241, 0.05); padding: 24px;
+      border-radius: 16px; border: 1px solid var(--primary-glow);
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+  <aside class="docs-sidebar">
+    <div class="docs-nav-title">Utama</div>
+    <a href="/" class="docs-nav-link">← Kembali ke Beranda</a>
+    
+    <div class="docs-nav-title" style="margin-top: 32px;">Arsitektur Modul</div>
+    <a href="/docs/modules-guide" class="docs-nav-link active">Membuat Modul</a>
+    <a href="/docs/architecture" class="docs-nav-link">Sistem Modul</a>
+    
+    <div class="docs-nav-title" style="margin-top: 32px;">Ekosistem</div>
+    <a href="/docs/plugins" class="docs-nav-link">Direktori Plugin</a>
+    <a href="/docs/plugins-guide" class="docs-nav-link">Membuat Plugin</a>
+  </aside>
+
+  <main class="docs-content">
+    <h1>Sistem Modul Internal</h1>
+    <p>Modul adalah tulang punggung dari aplikasi Simaju. Berbeda dengan Plugin yang bersifat dinamis, Modul digunakan untuk membangun fitur inti aplikasi yang terintegrasi erat dengan core system.</p>
+
+    <div class="highlight-box">
+      <h3 style="margin-top: 0; color: #fff;">🚀 Automasi dengan CLI</h3>
+      <p style="margin-bottom: 0;">Gunakan perintah berikut untuk membuat modul baru dengan struktur premium dalam hitungan detik:</p>
+      <div class="code-block" style="margin: 16px 0 0 0; padding: 12px 20px;">
+        ./simaju make:module <span class="string">&lt;nama_modul&gt;</span>
+      </div>
+    </div>
+
+    <h2>Struktur File Modul</h2>
+    <p>Setiap modul di <code>src/modules/</code> mengikuti pola arsitektur **Controller-Service-Route**:</p>
+    
+    <ul>
+      <li><strong>Controller:</strong> Menangani request HTTP dan mengirim response.</li>
+      <li><strong>Service:</strong> Berisi logika bisnis utama dan interaksi database.</li>
+      <li><strong>Route:</strong> Mendefinisikan endpoint API untuk modul tersebut.</li>
+      <li><strong>Validation:</strong> Skema validasi input (Joi/Zod).</li>
+    </ul>
+
+    <h2>Langkah Membuat Modul</h2>
+    <p>1. Jalankan perintah generator:</p>
+    <div class="code-block">
+      ./simaju make:module product
+    </div>
+
+    <p>2. Daftarkan rute di <code>src/core/router.js</code>:</p>
+    <div class="code-block">
+      <span class="keyword">router</span>.use(<span class="string">'/products'</span>, require(<span class="string">'../modules/product/product.route'</span>));
+    </div>
+
+    <h2>Perbedaan Modul & Plugin</h2>
+    <p>Gunakan tabel ini untuk memutuskan kapan harus membuat Modul atau Plugin:</p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; color: var(--muted); font-size: 14px;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+          <th style="padding: 12px;">Fitur</th>
+          <th style="padding: 12px;">Modul Internal</th>
+          <th style="padding: 12px;">Plugin Dinamis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 12px; color: #fff;">Tujuan</td>
+          <td style="padding: 12px;">Fitur Inti (Core)</td>
+          <td style="padding: 12px;">Ekstensi / Add-on</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 12px; color: #fff;">Instalasi</td>
+          <td style="padding: 12px;">Statis (Coding)</td>
+          <td style="padding: 12px;">Dinamis (Web Dashboard)</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; color: #fff;">Penyimpanan</td>
+          <td style="padding: 12px;"><code>src/modules/</code></td>
+          <td style="padding: 12px;"><code>src/plugins/</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

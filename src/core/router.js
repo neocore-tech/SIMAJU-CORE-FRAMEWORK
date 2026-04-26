@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const PluginManager = require('./plugin-manager');
 
 /**
  * Global Router
@@ -32,5 +33,9 @@ router.use('/config', configRoutes);
 router.use('/communication', commRoutes);
 router.use('/crm', require('../modules/crm/crm.route'));
 router.use('/lms', require('../modules/lms/lms.route'));
+router.use('/admin/plugins', require('../modules/plugin-manager/plugin-manager.route'));
+
+// ── Plugin Routes ─────────────────────────────────────────────
+PluginManager.boot(router, '/plugins');
 
 module.exports = router;

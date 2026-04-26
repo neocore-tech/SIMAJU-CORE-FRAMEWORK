@@ -24,11 +24,12 @@ if (!command) {
 
   console.log(`
   Commands:
-    make:module <name>     Create a new modular feature
+    make:module <name>     Create a new modular feature with premium base code
     make:migration <name>  Create a new migration file
     db:migrate [conn]      Run pending migrations
     db:rollback [conn]     Rollback last migration batch
     db:ping [conn]         Check database connection
+    module:install <url>   Install a module from Git
     plugin:install <url>   Install a plugin from Git
     plugin:list            List all installed plugins
     plugin:migrate <name>  Run migrations for a specific plugin
@@ -48,18 +49,93 @@ const commands = {
 
     fs.mkdirSync(modulePath, { recursive: true });
     
+    const camelName = name.charAt(0).toUpperCase() + name.slice(1);
+    
     const templates = [
-      { name: `${name}.controller.js`, content: `'use strict';\n\nmodule.exports = {};` },
-      { name: `${name}.service.js`,    content: `'use strict';\n\nmodule.exports = {};` },
-      { name: `${name}.route.js`,      content: `'use strict';\n\nconst express = require('express');\nconst router = express.Router();\n\nmodule.exports = router;` },
-      { name: `${name}.validation.js`, content: `'use strict';\n\nmodule.exports = {};` },
+      { 
+        name: `${name}.controller.js`, 
+        content: `'use strict';
+
+const ${camelName}Service = require('./${name}.service');
+const Response = require('../../utils/response');
+
+class ${camelName}Controller {
+  static async index(req, res) {
+    try {
+      const data = await ${camelName}Service.getAll();
+      return Response.success(res, data, 'Data fetched successfully');
+    } catch (error) {
+      return Response.error(res, error.message);
+    }
+  }
+
+  static async store(req, res) {
+    try {
+      const data = await ${camelName}Service.create(req.body);
+      return Response.success(res, data, 'Data created successfully', 201);
+    } catch (error) {
+      return Response.error(res, error.message);
+    }
+  }
+}
+
+module.exports = ${camelName}Controller;`
+      },
+      { 
+        name: `${name}.service.js`,    
+        content: `'use strict';
+
+const DB = require('../../database');
+
+class ${camelName}Service {
+  static async getAll() {
+    // Example: return await DB.table('${name}s').select('*');
+    return []; 
+  }
+
+  static async create(data) {
+    // Example: return await DB.table('${name}s').insert(data);
+    return data;
+  }
+}
+
+module.exports = ${camelName}Service;`
+      },
+      { 
+        name: `${name}.route.js`,      
+        content: `'use strict';
+
+const express = require('express');
+const router = express.Router();
+const ${camelName}Controller = require('./${name}.controller');
+
+router.get('/', ${camelName}Controller.index);
+router.post('/', ${camelName}Controller.store);
+
+module.exports = router;`
+      },
+      { 
+        name: `${name}.validation.js`, 
+        content: `'use strict';
+
+/**
+ * Validation rules for ${camelName}
+ */
+module.exports = {
+  create: {
+    // Define rules here
+  }
+};`
+      },
     ];
 
     templates.forEach(t => {
       fs.writeFileSync(path.join(modulePath, t.name), t.content);
     });
 
-    console.log(`✅ Module [${name}] created successfully at src/modules/${name}`);
+    console.log(`\n\x1b[32m✅ Module [${name}] created successfully at src/modules/${name}\x1b[0m`);
+    console.log(`\x1b[33m👉 Next step: Register it in src/core/router.js:\x1b[0m`);
+    console.log(`   router.use('/${name}', require('../modules/${name}/${name}.route'));\n`);
   },
 
   'make:migration': (name) => {
@@ -174,6 +250,33 @@ const commands = {
     } catch (err) {
       console.error(`❌ Plugin [${name}] migration failed:`, err.message);
       process.exit(1);
+    }
+  },
+  'module:install': (url, name) => {
+    if (!url) return console.error('Error: Module Git URL is required');
+    const { spawnSync } = require('child_process');
+    const moduleName = name || path.basename(url, '.git');
+    const targetPath = path.join(__dirname, 'src', 'modules', moduleName);
+
+    if (fs.existsSync(targetPath)) {
+      return console.error(`Error: Module [${moduleName}] already exists`);
+    }
+
+    console.log(`🚀 Installing module [${moduleName}]...`);
+    
+    // For now we assume the repo contains the module directly
+    const result = spawnSync('git', ['clone', url, targetPath], { stdio: 'inherit' });
+
+    if (result.status === 0) {
+      // Clean up .git folder inside module
+      const gitPath = path.join(targetPath, '.git');
+      if (fs.existsSync(gitPath)) {
+        fs.rmSync(gitPath, { recursive: true, force: true });
+      }
+      console.log(`\x1b[32m✅ Module [${moduleName}] installed successfully.\x1b[0m`);
+      console.log(`\x1b[33m👉 Register it in src/core/router.js to activate.\x1b[0m`);
+    } else {
+      console.error(`❌ Failed to install module [${moduleName}].`);
     }
   }
 };

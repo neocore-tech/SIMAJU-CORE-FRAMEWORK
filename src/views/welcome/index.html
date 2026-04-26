@@ -362,15 +362,15 @@
 
   <!-- Navigation -->
   <nav>
-    <a href="#" class="logo">
+    <a href="/" class="logo">
       <div class="logo-icon">S</div>
       SIMAJU CORE
     </a>
     <div class="nav-links">
       <a href="#features">Fitur</a>
+      <a href="/modules">Modul</a>
       <a href="/docs">Dokumentasi</a>
-      <a href="/ecosystem">Ekosistem</a>
-      <a href="#status">Status Sistem</a>
+      <a href="/admin/plugins" style="color: var(--primary); font-weight: 700;">Plugin Manager</a>
     </div>
     <div class="nav-actions">
       <a href="https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK" target="_blank" class="btn btn-outline">
@@ -527,6 +527,7 @@
         <div class="card-icon"><span class="material-symbols-outlined">extension</span></div>
         <h3>Direktori Plugin</h3>
         <p>Ratusan plugin pihak ketiga untuk integrasi pembayaran, pengiriman email, analitik, dan banyak lagi yang siap digunakan.</p>
+        <a href="/docs/plugins" style="color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; margin-top: 12px; display: inline-block;">Jelajahi Plugin &rarr;</a>
       </div>
     </div>
   </section>
@@ -561,6 +562,10 @@
         <div class="status-item reveal delay-4">
           <h4>Layanan Database</h4>
           <p style="color: #27c93f; font-size: 18px;"><span class="material-symbols-outlined" style="color: #27c93f;">dns</span> Normal</p>
+        </div>
+        <div class="status-item reveal delay-5">
+          <h4>Plugin Engine</h4>
+          <p style="color: #27c93f; font-size: 18px;"><span class="material-symbols-outlined" style="color: #27c93f;">settings_input_component</span> Aktif</p>
         </div>
       </div>
     </div>
@@ -599,6 +604,7 @@
       <div>
         <h4 class="footer-title">Framework</h4>
         <ul class="footer-links">
+          <li><a href="/modules">Katalog Modul</a></li>
           <li><a href="/docs">Mulai Cepat</a></li>
           <li><a href="/docs">Dokumentasi API</a></li>
           <li><a href="#">Panduan Migrasi</a></li>
@@ -608,8 +614,8 @@
       <div>
         <h4 class="footer-title">Ekosistem</h4>
         <ul class="footer-links">
-          <li><a href="#">CLI Tool</a></li>
-          <li><a href="#">Plugin Resmi</a></li>
+          <li><a href="/admin/plugins">Plugin Manager</a></li>
+          <li><a href="#">Official Plugins</a></li>
           <li><a href="#">Simaju ORM</a></li>
           <li><a href="#">Integrasi Cloud</a></li>
         </ul>

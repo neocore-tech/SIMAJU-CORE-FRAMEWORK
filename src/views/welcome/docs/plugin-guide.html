@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Developer Plugin - Simaju Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6366f1;
+      --bg: #020617;
+      --surface: #0f172a;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0; display: flex; min-height: 100vh;
+    }
+    
+    /* Sidebar Docs */
+    .docs-sidebar {
+      width: 280px; border-right: 1px solid var(--border);
+      padding: 40px 24px; position: sticky; top: 0; height: 100vh;
+      overflow-y: auto; background: rgba(15, 23, 42, 0.5);
+    }
+    .docs-nav-title { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+    .docs-nav-link { display: block; padding: 10px 0; color: var(--muted); text-decoration: none; font-size: 14px; transition: 0.2s; }
+    .docs-nav-link:hover, .docs-nav-link.active { color: #fff; }
+    .docs-nav-link.active { font-weight: 600; }
+
+    /* Main Content */
+    .docs-content { flex: 1; padding: 60px 8%; max-width: 900px; }
+    h1 { font-size: 36px; margin-bottom: 24px; letter-spacing: -1px; }
+    h2 { font-size: 24px; margin-top: 48px; margin-bottom: 16px; color: var(--primary); }
+    p { line-height: 1.8; color: var(--muted); margin-bottom: 24px; }
+    
+    .code-block {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; overflow-x: auto; margin-bottom: 32px;
+      color: #e6edf3; line-height: 1.6;
+    }
+    .keyword { color: #ff7b72; }
+    .string { color: #a5d6ff; }
+    .comment { color: #8b949e; }
+
+    .file-tree {
+      background: rgba(255,255,255,0.02); padding: 20px;
+      border-radius: 12px; border: 1px dashed var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+  <aside class="docs-sidebar">
+    <div class="docs-nav-title">Dasar</div>
+    <a href="/docs" class="docs-nav-link">Pendahuluan</a>
+    <a href="/docs/basics" class="docs-nav-link">Struktur Folder</a>
+    
+    <div class="docs-nav-title" style="margin-top: 32px;">Ekosistem</div>
+    <a href="/docs/plugins" class="docs-nav-link">Direktori Plugin</a>
+    <a href="/docs/plugins-guide" class="docs-nav-link active">Membuat Plugin</a>
+    
+    <div class="docs-nav-title" style="margin-top: 32px;">Lanjutan</div>
+    <a href="/docs/database" class="docs-nav-link">Database & Migrasi</a>
+    <a href="/docs/security" class="docs-nav-link">Keamanan</a>
+  </aside>
+
+  <main class="docs-content">
+    <h1>Membuat Plugin Pertama Anda</h1>
+    <p>Simaju Core dirancang dengan arsitektur modular yang memungkinkan Anda memperluas fungsionalitas tanpa mengubah kode inti framework. Setiap plugin adalah unit mandiri yang memiliki rute, model, dan kontroler sendiri.</p>
+
+    <h2>Struktur Folder Plugin</h2>
+    <p>Semua plugin diletakkan di dalam folder <code>src/plugins/</code>. Berikut adalah struktur standar yang direkomendasikan:</p>
+    
+    <div class="file-tree">
+      my-plugin/ <br>
+      ├── plugin.json       <span class="comment">// Metadata plugin</span><br>
+      ├── routes.js        <span class="comment">// Definisi rute API</span><br>
+      ├── controller.js    <span class="comment">// Logika bisnis</span><br>
+      ├── model.js         <span class="comment">// Skema/Akses database</span><br>
+      ├── migrations/      <span class="comment">// Skrip tabel database</span><br>
+      └── index.js         <span class="comment">// (Opsional) Entry point hook</span>
+    </div>
+
+    <h2>1. Definisi Metadata (plugin.json)</h2>
+    <p>File ini wajib ada untuk mengidentifikasi plugin Anda di Dashboard Admin.</p>
+    <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="string">"name"</span>: <span class="string">"My Awesome Plugin"</span>,<br>
+&nbsp;&nbsp;<span class="string">"version"</span>: <span class="string">"1.0.0"</span>,<br>
+&nbsp;&nbsp;<span class="string">"description"</span>: <span class="string">"Plugin untuk fitur X"</span>,<br>
+&nbsp;&nbsp;<span class="string">"author"</span>: <span class="string">"Nama Anda"</span><br>
+}
+    </div>
+
+    <h2>2. Definisi Rute (routes.js)</h2>
+    <p>Plugin akan otomatis didaftarkan pada endpoint <code>/api/plugins/[folder-name]</code>.</p>
+    <div class="code-block">
+<span class="keyword">const</span> express = require(<span class="string">'express'</span>);<br>
+<span class="keyword">const</span> router = express.Router();<br>
+<span class="keyword">const</span> Controller = require(<span class="string">'./controller'</span>);<br>
+<br>
+router.get(<span class="string">'/'</span>, Controller.index);<br>
+<br>
+module.exports = router;
+    </div>
+
+    <h2>3. Akses Database (model.js)</h2>
+    <p>Anda dapat menggunakan Core Database wrapper untuk akses yang mudah.</p>
+    <div class="code-block">
+<span class="keyword">const</span> DB = require(<span class="string">'../../database'</span>);<br>
+<br>
+<span class="keyword">class</span> MyPluginModel {<br>
+&nbsp;&nbsp;<span class="keyword">static async</span> getAll() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return await</span> DB.table(<span class="string">'plugin_table'</span>).select(<span class="string">'*'</span>);<br>
+&nbsp;&nbsp;}<br>
+}<br>
+<br>
+module.exports = MyPluginModel;
+    </div>
+
+    <div style="background: rgba(99, 102, 241, 0.1); padding: 24px; border-radius: 12px; border-left: 4px solid var(--primary); margin-top: 40px;">
+      <h4 style="margin-bottom: 8px;">💡 Tips Profesional</h4>
+      <p style="margin-bottom: 0; font-size: 14px;">Selalu buat migrasi database di dalam folder <code>migrations/</code> agar pengguna bisa memasang plugin Anda dengan perintah <code>./simaju plugin:migrate</code>.</p>
+    </div>
+  </main>
+</body>
+</html>

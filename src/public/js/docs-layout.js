@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const menu = [
     {
+      title: 'Utama',
+      links: [
+        { name: '← Kembali ke Beranda', path: '/' }
+      ]
+    },
+    {
       title: 'Pengenalan',
       links: [
         { name: 'Memulai Simaju', path: '/docs/intro' },
@@ -18,9 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      title: 'Arsitektur',
+      title: 'Arsitektur Modul',
       links: [
-        { name: 'Sistem Modul', path: '/docs/architecture' },
+        { name: 'Membuat Modul', path: '/docs/modules-guide' },
+        { name: 'Sistem Modul', path: '/docs/architecture' }
+      ]
+    },
+    {
+      title: 'Arsitektur Core',
+      links: [
         { name: 'Arsitektur Inti', path: '/docs/architecture#core' }
       ]
     },
@@ -54,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Services & Logic', path: '/docs/advanced' },
         { name: 'Middlewares', path: '/docs/advanced#middlewares' },
         { name: 'Logging & Debug', path: '/docs/advanced#logging' }
+      ]
+    },
+    {
+      title: 'Sistem Plugin',
+      links: [
+        { name: 'Direktori Plugin', path: '/docs/plugins' },
+        { name: 'Panduan Developer', path: '/docs/plugins-guide' }
       ]
     }
   ];

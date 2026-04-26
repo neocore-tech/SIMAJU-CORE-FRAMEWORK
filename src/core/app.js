@@ -10,7 +10,6 @@ const tenantIdentify = require('../middlewares/tenant.middleware');
 const apiKeyAuth = require('../middlewares/api-key.middleware');
 const apiLimiter = require('../middlewares/rate-limit.middleware');
 const scheduler = require('./scheduler');
-const PluginManager = require('./plugin-manager');
 const path = require('path');
 
 const app = express();
@@ -39,7 +38,7 @@ app.use('/api', tenantIdentify);
 app.use('/api', apiLimiter, router);
 
 // ── Plugins ───────────────────────────────────────────────────
-PluginManager.boot(app);
+// Boot is now handled in index.js bootstrap
 
 // ── Request Logger ────────────────────────────────────────────
 app.use((req, res, next) => {

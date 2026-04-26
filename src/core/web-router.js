@@ -70,4 +70,34 @@ router.get('/ecosystem', (req, res) => {
   res.status(404).send('Ecosystem page not found.');
 });
 
+router.get('/admin/plugins', (req, res) => {
+  const filePath = path.join(__dirname, '../views/admin/plugins.html');
+  if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  res.status(404).send('Admin Plugin page not found.');
+});
+
+router.get('/docs/plugins', (req, res) => {
+  const filePath = path.join(__dirname, '../views/welcome/docs/plugins-directory.html');
+  if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  res.status(404).send('Plugin Directory page not found.');
+});
+
+router.get('/docs/plugins-guide', (req, res) => {
+  const filePath = path.join(__dirname, '../views/welcome/docs/plugin-guide.html');
+  if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  res.status(404).send('Plugin Guide page not found.');
+});
+
+router.get('/docs/modules-guide', (req, res) => {
+  const filePath = path.join(__dirname, '../views/welcome/docs/module-guide.html');
+  if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  res.status(404).send('Module Guide page not found.');
+});
+
+router.get('/modules', (req, res) => {
+  const filePath = path.join(__dirname, '../views/welcome/modules.html');
+  if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  res.status(404).send('Modules page not found.');
+});
+
 module.exports = router;
