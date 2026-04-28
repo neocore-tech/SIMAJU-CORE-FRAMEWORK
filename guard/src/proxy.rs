@@ -128,9 +128,15 @@ pub async fn handle_request(
                 "← Upstream response"
             );
 
-            // Jika login gagal → catat untuk brute force detection
-            if path == config.brute_force.login_route && status == reqwest::StatusCode::UNAUTHORIZED {
-                state.brute_store.record_failure(&ip_str, config.brute_force.max_failed, config.brute_force.lockout_minutes);
+            // Evaluasi brute force login
+            if path == config.brute_force.login_route {
+                if status == reqwest::StatusCode::OK || status == reqwest::StatusCode::CREATED {
+                    // Login berhasil, reset counter
+                    state.brute_store.reset_failure(&ip_str);
+                } else if config.brute_force.count_mode == "backend_response" && status == reqwest::StatusCode::UNAUTHORIZED {
+                    // Jika login gagal dan count_mode = backend_response, baru catat kegagalan
+                    state.brute_store.record_failure(&ip_str, config.brute_force.max_failed, config.brute_force.lockout_minutes);
+                }
             }
 
             // Build response balik ke client
@@ -144,7 +150,16 @@ pub async fn handle_request(
                         h.insert(name, value.clone());
                     }
                 }
+                
+                // --- Security Headers (Helmet-like) ---
                 h.insert("X-Protected-By", "SIMAJU Guard".parse().unwrap());
+                h.insert("X-Frame-Options", "DENY".parse().unwrap());
+                h.insert("X-Content-Type-Options", "nosniff".parse().unwrap());
+                h.insert("X-XSS-Protection", "1; mode=block".parse().unwrap());
+                h.insert("Referrer-Policy", "strict-origin-when-cross-origin".parse().unwrap());
+                h.insert("Permissions-Policy", "geolocation=(), camera=(), microphone=()".parse().unwrap());
+                h.insert("Strict-Transport-Security", "max-age=31536000; includeSubDomains".parse().unwrap());
+                h.insert("Content-Security-Policy", "default-src 'self'".parse().unwrap());
             }
 
             Ok(response.body(Full::new(Bytes::from(body)))?)

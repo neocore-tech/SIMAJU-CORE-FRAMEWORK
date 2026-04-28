@@ -2,6 +2,7 @@ pub mod network;
 pub mod inspector;
 pub mod analyzer;
 pub mod auth;
+pub mod tls;
 
 use std::sync::Arc;
 use crate::config::GuardConfig;

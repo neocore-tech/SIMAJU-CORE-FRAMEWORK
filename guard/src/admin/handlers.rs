@@ -31,12 +31,6 @@ pub async fn auth_middleware(
     request: Request<axum::body::Body>,
     next: Next,
 ) -> Result<impl IntoResponse, StatusCode> {
-    
-    // Bypass auth untuk /metrics agar bisa di-scrape oleh Prometheus
-    if request.uri().path() == "/metrics" {
-        return Ok(next.run(request).await);
-    }
-
     let auth_header = headers.get("x-admin-key").and_then(|h| h.to_str().ok());
     if auth_header != Some(&config.server.admin_key) {
         tracing::warn!("🛡️ [ADMIN] Upaya akses Admin API ditolak (Key salah/kosong)");

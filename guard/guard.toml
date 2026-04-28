@@ -8,7 +8,9 @@ port      = 8080
 tls_port  = 8443
 # Port untuk Admin REST API (jangan ekspos ke internet!)
 admin_port = 9000
-# Admin API Key — ganti dengan string acak yang kuat
+# Baca admin key dari env var ini (fallback ke admin_key jika kosong)
+admin_key_env = "SIMAJU_ADMIN_KEY"
+# Admin API Key default — ganti dengan string acak yang kuat
 admin_key  = "GANTI_DENGAN_KEY_AMAN_DISINI"
 
 [upstream]
@@ -49,6 +51,12 @@ blocked_countries = []  # Contoh: ["CN", "RU", "KP"]
 [payload]
 # Ukuran maksimum request body (KB)
 max_body_size_kb          = 1024
+
+# Mode WAF: "log_only" (catat saja) atau "block" (tolak)
+mode                      = "log_only"
+# Rute yang tidak di scan oleh WAF
+whitelist_routes          = [ "/admin/query" ]
+
 detect_sqli               = true
 detect_xss                = true
 detect_traversal          = true
@@ -59,6 +67,8 @@ enabled          = true
 max_failed       = 5       # Maks gagal login sebelum lockout
 lockout_minutes  = 15
 login_route      = "/api/v1/auth/login"
+# Mode counter: "rust_side" (hitung POST login), "backend_response" (tunggu 401 dari Node.js)
+count_mode       = "rust_side"
 
 [jwt]
 # Jika true, Guard akan pre-verify JWT sebelum diteruskan ke Node.js

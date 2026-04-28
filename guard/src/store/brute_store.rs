@@ -43,6 +43,12 @@ impl BruteForceStore {
         }
     }
 
+    /// Reset counter kegagalan saat login berhasil
+    pub fn reset_failure(&self, ip: &str) {
+        self.failures.remove(ip);
+        self.locked_ips.remove(ip);
+    }
+
     /// Mengecek apakah sebuah IP sedang dalam masa hukuman (lockout)
     pub fn is_locked(&self, ip: &str) -> bool {
         if let Some(locked_until) = self.locked_ips.get(ip) {

@@ -29,8 +29,13 @@ pub struct ServerConfig {
     pub port:       u16,
     pub tls_port:   u16,
     pub admin_port: u16,
+    #[serde(default = "default_admin_key_env")]
+    pub admin_key_env: String,
+    #[serde(default)]
     pub admin_key:  String,
 }
+
+fn default_admin_key_env() -> String { "SIMAJU_ADMIN_KEY".to_string() }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct UpstreamConfig {
@@ -75,11 +80,17 @@ pub struct GeoIpConfig {
 #[derive(Debug, Deserialize, Clone)]
 pub struct PayloadConfig {
     pub max_body_size_kb:         u64,
+    #[serde(default = "default_waf_mode")]
+    pub mode:                     String,
+    #[serde(default)]
+    pub whitelist_routes:         Vec<String>,
     pub detect_sqli:              bool,
     pub detect_xss:               bool,
     pub detect_traversal:         bool,
     pub detect_command_injection: bool,
 }
+
+fn default_waf_mode() -> String { "log_only".to_string() }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct BruteForceConfig {
@@ -87,7 +98,11 @@ pub struct BruteForceConfig {
     pub max_failed:      u32,
     pub lockout_minutes: u64,
     pub login_route:     String,
+    #[serde(default = "default_count_mode")]
+    pub count_mode:      String,
 }
+
+fn default_count_mode() -> String { "rust_side".to_string() }
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct JwtConfig {
@@ -121,8 +136,12 @@ impl GuardConfig {
         let content = fs::read_to_string(path)
             .map_err(|e| format!("Gagal membaca {}: {}", path, e))?;
 
-        let config: GuardConfig = toml::from_str(&content)
+        let mut config: GuardConfig = toml::from_str(&content)
             .map_err(|e| format!("Gagal parse {}: {}", path, e))?;
+
+        if let Ok(env_key) = std::env::var(&config.server.admin_key_env) {
+            config.server.admin_key = env_key;
+        }
 
         config.validate()?;
         Ok(config)
@@ -130,8 +149,8 @@ impl GuardConfig {
 
     /// Validasi nilai-nilai konfigurasi
     fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.server.admin_key == "GANTI_DENGAN_KEY_AMAN_DISINI" {
-            eprintln!("⚠️  PERINGATAN: admin_key masih menggunakan nilai default! Ganti di guard.toml");
+        if self.server.admin_key.is_empty() || self.server.admin_key == "GANTI_DENGAN_KEY_AMAN_DISINI" {
+            eprintln!("⚠️  PERINGATAN: admin_key masih menggunakan nilai default atau kosong! Ganti di guard.toml atau set env {}", self.server.admin_key_env);
         }
 
         if self.upstream.target.is_empty() {

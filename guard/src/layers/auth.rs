@@ -29,6 +29,12 @@ pub async fn check_auth(
                     code: 403 
                 };
             }
+
+            // Jika mode = rust_side, langsung hitung akses ke login sebagai failure
+            // Response sukses dari Node.js (200 OK) akan mereset ini nanti di proxy.rs
+            if config.brute_force.count_mode == "rust_side" {
+                state.brute_store.record_failure(ip, config.brute_force.max_failed, config.brute_force.lockout_minutes);
+            }
         }
     }
 

@@ -23,11 +23,19 @@ use store::AppState;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // 1. Setup Logging (Tracing)
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::INFO)
-        .finish();
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("Gagal setup tracing subscriber");
+    let log_format = std::env::var("RUST_LOG_FORMAT").unwrap_or_else(|_| "pretty".to_string());
+    if log_format == "json" {
+        let subscriber = FmtSubscriber::builder()
+            .json()
+            .with_max_level(Level::INFO)
+            .finish();
+        tracing::subscriber::set_global_default(subscriber).unwrap();
+    } else {
+        let subscriber = FmtSubscriber::builder()
+            .with_max_level(Level::INFO)
+            .finish();
+        tracing::subscriber::set_global_default(subscriber).unwrap();
+    }
 
     info!("Memulai SIMAJU Guard...");
 
@@ -44,7 +52,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Load blacklist/whitelist dari file konfigurasi guard.toml
     state.ip_list.load_from_config(&config.ip.blacklist, &config.ip.whitelist);
 
-    // 4. Setup TCP Listener
+    // 4. Setup TLS (jika dikonfigurasi)
+    let mut tls_acceptor = None;
+    if !config.tls.cert_file.is_empty() && !config.tls.key_file.is_empty() {
+        // Cek apakah file ada, jika tidak, kita bypass tanpa TLS (atau cetak warning)
+        if std::path::Path::new(&config.tls.cert_file).exists() {
+            match layers::tls::load_tls_config(&config.tls.cert_file, &config.tls.key_file) {
+                Ok(tls_cfg) => {
+                    tls_acceptor = Some(tokio_rustls::TlsAcceptor::from(tls_cfg));
+                    info!("🔒 TLS aktif! Sertifikat berhasil dimuat.");
+                }
+                Err(e) => error!("⚠️ Gagal memuat sertifikat TLS (berjalan tanpa HTTPS): {}", e),
+            }
+        } else {
+            info!("ℹ️ Sertifikat TLS tidak ditemukan di {}, berjalan tanpa HTTPS.", config.tls.cert_file);
+        }
+    }
+
+    // 5. Setup TCP Listener
     let addr = SocketAddr::from(([0, 0, 0, 0], config.server.port));
     let listener = match TcpListener::bind(addr).await {
         Ok(l) => l,
@@ -57,28 +82,45 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     info!("🛡️  SIMAJU Guard listening on http://{}", addr);
     info!("🚀 Forwarding traffic ke upstream: {}", config.upstream.target);
 
-    // 5. Jalankan Admin Server di background
+    // 6. Jalankan Admin Server di background
     let admin_config = Arc::clone(&config);
     let admin_state = Arc::clone(&state);
     tokio::spawn(async move {
         admin::start_admin_server(admin_config, admin_state).await;
     });
 
-    // 6. Accept connections loop (Main Server)
+    // 7. Accept connections loop (Main Server)
     loop {
         let (stream, client_addr) = listener.accept().await?;
-        let io = TokioIo::new(stream);
         let config_clone = Arc::clone(&config);
         let state_clone = Arc::clone(&state);
+        let acceptor_clone = tls_acceptor.clone();
 
         // Spawn task untuk setiap koneksi (Concurrent)
         tokio::task::spawn(async move {
-            let service = service_fn(move |req: Request<Incoming>| {
-                proxy::handle_request(req, client_addr, Arc::clone(&config_clone), Arc::clone(&state_clone))
-            });
+            if let Some(acceptor) = acceptor_clone {
+                match acceptor.accept(stream).await {
+                    Ok(tls_stream) => {
+                        let io = TokioIo::new(tls_stream);
+                        let service = service_fn(move |req: Request<Incoming>| {
+                            proxy::handle_request(req, client_addr, Arc::clone(&config_clone), Arc::clone(&state_clone))
+                        });
 
-            if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
-                error!("Error serving connection: {:?}", err);
+                        if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
+                            error!("Error serving TLS connection: {:?}", err);
+                        }
+                    }
+                    Err(e) => error!("TLS handshake failed dengan {}: {:?}", client_addr, e),
+                }
+            } else {
+                let io = TokioIo::new(stream);
+                let service = service_fn(move |req: Request<Incoming>| {
+                    proxy::handle_request(req, client_addr, Arc::clone(&config_clone), Arc::clone(&state_clone))
+                });
+
+                if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
+                    error!("Error serving HTTP connection: {:?}", err);
+                }
             }
         });
     }
