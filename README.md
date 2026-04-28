@@ -15,184 +15,169 @@
 
 ---
 
-## 🚀 Apa itu SIMAJU Core?
+## 🚀 What is SIMAJU Core?
 
-**SIMAJU Core** adalah framework backend modern dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial — semua fitur bisnis dipasang terpisah melalui sistem modul dan plugin.
+**SIMAJU Core** is a modern backend framework with an **Ultra-Lightweight Modular** architecture. The main framework is intentionally built to be extremely lightweight and contains only essential modules — all business features are installed separately through the module and plugin system.
 
-Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasis **Rust** super cepat yang melindungi aplikasi dari serangan *DDoS*, *SQL Injection*, *XSS*, dan serangan *Brute Force*, memastikan performa dan keamanan tingkat tinggi.
+Now equipped with **SIMAJU Guard**, a lightning-fast Reverse Proxy & Firewall based on **Rust** that protects your application from *DDoS*, *SQL Injection*, *XSS*, and *Brute Force* attacks, ensuring high performance and top-tier security.
 
 ---
 
-## ✨ Fitur Unggulan
+## ✨ Key Features
 
-| Fitur | Deskripsi |
+| Feature | Description |
 |---|---|
-| 🛡️ **SIMAJU Guard** | Rust Firewall bawaan: Rate Limiter, IP Blacklist, WAF, Brute Force Protection |
-| 📦 **Modular System** | Pasang hanya modul bisnis yang dibutuhkan — tidak ada bloat |
-| 🔌 **Dynamic Discovery** | Router & Plugin Manager 100% otomatis terdeteksi |
-| 🛠️ **CLI `mji`** | Perintah artisan-like yang sangat mudah digunakan |
+| 🛡️ **SIMAJU Guard** | Built-in Rust Firewall: Rate Limiter, IP Blacklist, WAF, Brute Force Protection |
+| 📦 **Modular System** | Install only the business modules you need — no bloatware |
+| 🔌 **Dynamic Discovery** | Routers & Plugin Manager are 100% auto-detected |
+| 🛠️ **CLI `mji`** | Artisan-like commands that are incredibly easy to use |
 | 💾 **Multi-DB Support** | SQLite, MySQL, PostgreSQL, MongoDB — Database Agnostic |
-| 🔐 **Auto Secret Keygen** | Kunci JWT & Admin Key di-generate unik per proyek secara otomatis |
-| 🌐 **SEO Engine** | Meta dinamis, Sitemap, Schema JSON-LD, dan Redirect 301 bawaan |
+| 🔐 **Auto Secret Keygen** | Unique JWT Key & Admin Key automatically generated per project |
+| 🌐 **SEO Engine** | Dynamic Meta tags, Sitemap, Schema JSON-LD, and built-in 301 Redirects |
 
 ---
 
-## ⚡ Instalasi Otomatis (Direkomendasikan)
+## ⚡ Automated Installation (Recommended)
 
-> **Prasyarat:** Pastikan Anda sudah menginstal [Node.js](https://nodejs.org/) versi 18 atau lebih baru dan [Git](https://git-scm.com/).
+> **Prerequisites:** Make sure you have installed [Node.js](https://nodejs.org/) version 18 or newer and [Git](https://git-scm.com/).
 
-Cukup satu perintah untuk memulai. Proses berikut akan berjalan **sepenuhnya otomatis**:
+Just one command to get started. The following process will run **completely automatically**:
 
 ```bash
-npx create-simaju-app nama-proyek-anda
+npx create-simaju-app your-project-name
 ```
 
-### Yang terjadi secara otomatis di balik layar:
-1. ✅ Framework ter-*clone* dari GitHub ke folder proyek Anda
-2. ✅ Riwayat git lama dibersihkan & repositori git baru dibuat khusus untuk proyek Anda
-3. ✅ Anda ditanya jenis database yang ingin digunakan (SQLite / MySQL / PostgreSQL)
-4. ✅ File `.env` dibuat dari template dengan **JWT Secret & Admin Key yang benar-benar acak & unik**
-5. ✅ Semua dependency NPM langsung terinstall
+### What happens automatically under the hood:
+1. ✅ Framework is cloned from GitHub to your project folder
+2. ✅ Old git history is cleaned & a fresh git repository is initialized for your project
+3. ✅ You will be prompted to select your preferred database (SQLite / MySQL / PostgreSQL)
+4. ✅ `.env` file is created from the template with **truly random & unique JWT Secret & Admin Keys**
+5. ✅ All NPM dependencies are installed immediately
 
-### Lanjutkan setelah instalasi:
+### Continue after installation:
 
 ```bash
-# Masuk ke folder proyek
-cd nama-proyek-anda
+# Go into your project folder
+cd your-project-name
 
-# Jalankan framework + firewall sekaligus
+# Run the framework + firewall simultaneously
 ./mji up
 ```
 
-> 💡 Jika menggunakan **SQLite**, semua siap langsung! Jika menggunakan **MySQL/PostgreSQL**, isi kredensial di file `.env` terlebih dahulu, lalu jalankan `./mji migrate`.
+> 💡 If you chose **SQLite**, everything is ready to go! If you chose **MySQL/PostgreSQL**, fill in your database credentials in the `.env` file first, then run `./mji migrate`.
 
 ---
 
-## 💻 Cara Menjalankan
+## 💻 How to Run
 
-SIMAJU Core menyediakan perintah `mji` sebagai pusat kontrol seluruh operasi framework Anda.
+SIMAJU Core provides the `mji` command as the central control for all your framework operations.
 
-### Mode Utama
+### Main Modes
 
 ```bash
-# 🚀 PALING DIREKOMENDASIKAN: Jalankan Framework + Firewall bersamaan
+# 🚀 HIGHLY RECOMMENDED: Run Framework + Firewall simultaneously
 ./mji up
 
-# 💻 Mode Development (Framework Node.js saja)
+# 💻 Development Mode (Node.js Framework only)
 ./mji dev
 
-# 🛡️ Firewall saja (untuk arsitektur microservices)
+# 🛡️ Firewall only (for microservices architecture)
 ./mji guard
 ```
 
 ### Database
 
 ```bash
-./mji migrate      # Jalankan semua migration
-./mji seed         # Isi data awal (seeder)
-./mji rollback     # Batalkan migration terakhir
+./mji migrate      # Run all pending migrations
+./mji seed         # Populate database with initial data (seeders)
+./mji rollback     # Undo the last migration batch
 ```
 
-### Scaffolding (Generate Kode Otomatis)
+### Scaffolding (Auto Code Generation)
 
 ```bash
-./mji make:module inventaris       # Buat modul baru
-./mji make:migration create_users  # Buat file migration baru
+./mji make:module inventory       # Create a new business module
+./mji make:migration create_users # Create a new migration file
 ```
 
 ### Monitoring & Testing
 
 ```bash
-./mji monit   # Buka Terminal Dashboard (CPU, RAM, Network)
-./mji test    # Jalankan unit testing & API testing
-./mji help    # Tampilkan semua perintah yang tersedia
+./mji monit   # Open Interactive Terminal Dashboard (CPU, RAM, Network)
+./mji test    # Run unit testing & API testing
+./mji help    # Display all available commands
 ```
 
 ---
 
-## 📁 Struktur Folder Utama
+## 📁 Core Directory Structure
 
 ```text
-nama-proyek-anda/
+your-project-name/
 ├── src/
-│   ├── core/        # Engine inti framework (Router, Auth, DB, dll)
-│   ├── modules/     # Modul bisnis Anda (Inventaris, CRM, dll)
-│   ├── plugins/     # Plugin tambahan (Email, Payment Gateway, dll)
+│   ├── core/        # Framework engine (Router, Auth, DB, etc)
+│   ├── modules/     # Your business modules (Inventory, CRM, etc)
+│   ├── plugins/     # Additional plugins (Email, Payment Gateway, etc)
 │   └── seo/         # SEO Engine (Meta, Sitemap, Schema)
 ├── guard/           # SIMAJU Guard Firewall (Rust)
-│   └── guard.toml   # Konfigurasi firewall & WAF
+│   └── guard.toml   # Firewall & WAF configuration
 ├── resources/
-│   └── views/       # Template Tema & Views (EJS)
-├── public/          # Aset statis (CSS, JS, Gambar)
-├── tests/           # Script unit & API testing
-├── .env             # Konfigurasi environment (auto-generated)
-├── simaju.json      # Daftar modul, plugin, dan tema aktif
-└── mji              # CLI utama SIMAJU
+│   └── views/       # Theme Templates & Views (EJS)
+├── public/          # Static assets (CSS, JS, Images)
+├── tests/           # Unit & API testing scripts
+├── .env             # Environment configuration (auto-generated)
+├── simaju.json      # List of active modules, plugins, and themes
+└── mji              # SIMAJU main CLI tool
 ```
 
 ---
 
-## 🛡️ SIMAJU Guard — Firewall Berbasis Rust
+## 🛡️ SIMAJU Guard — Rust-Based Firewall
 
-Framework ini dilindungi oleh **SIMAJU Guard**, sebuah *reverse proxy* berperforma tinggi yang dibangun menggunakan Rust.
+This framework is protected by **SIMAJU Guard**, a high-performance *reverse proxy* built with Rust.
 
-| Perlindungan | Detail |
+| Protection | Detail |
 |---|---|
-| **WAF** | Mendeteksi & memblokir SQLi, XSS, Path Traversal, Command Injection |
-| **Rate Limiter** | Token Bucket per IP, bisa dikonfigurasi per-rute |
-| **Brute Force Lock** | Blokir otomatis setelah sejumlah percobaan login gagal |
-| **IP Blacklist** | Auto-block IP penyerang secara dinamis |
-| **Security Headers** | HSTS, X-Frame-Options, CSP, dll — injeksi otomatis |
-| **TLS/HTTPS** | Dukungan sertifikat SSL/TLS nativ via `rustls` |
-| **Admin API** | Kontrol firewall dari jarak jauh via REST API (port 9000) |
+| **WAF** | Detects & blocks SQLi, XSS, Path Traversal, Command Injection |
+| **Rate Limiter** | Token Bucket per IP, configurable per-route |
+| **Brute Force Lock** | Auto-block IPs after a number of failed login attempts |
+| **IP Blacklist** | Dynamically blocks attacking IPs |
+| **Security Headers** | HSTS, X-Frame-Options, CSP, etc. — automatically injected |
+| **TLS/HTTPS** | Native SSL/TLS certificate support via `rustls` |
+| **Admin API** | Remote firewall control via REST API (port 9000) |
 
-Konfigurasi lengkap firewall terdapat di file `guard/guard.toml`.
+Full firewall configuration can be found in `guard/guard.toml`.
 
 ---
 
-## 📚 Dokumentasi
+## 🌐 SIMAJU Ecosystem
 
-Dokumentasi teknis lengkap tersedia di folder `Dokumentasi/`:
+SIMAJU Core is designed to be extensible. Discover the official collection of ready-to-use modules, plugins, and themes in the following repositories:
 
-| File | Isi |
-|---|---|
-| `guide_module_development.md` | Cara membuat Modul bisnis baru (MVC) |
-| `guide_plugin_development.md` | Cara membuat Plugin & hooking Event Bus |
-| `guide_theme_development.md` | Cara membuat & mengaktifkan Tema (SSR) |
-| `seo.md` | Panduan lengkap SEO Engine (8 Phase) |
-| `firewall_guard.md` | Dokumentasi SIMAJU Guard |
-| `architecture.md` | Arsitektur folder & alur kerja core |
-
----
-
-## 🌐 Ekosistem SIMAJU
-
-SIMAJU Core dirancang untuk diperluas. Temukan koleksi resmi modul, plugin, dan tema siap pakai di repositori berikut:
-
-| Repositori | Isi | Link |
+| Repository | Contents | Link |
 |---|---|---|
-| **koleksi-modul-simaju** | Koleksi modul bisnis resmi (CRM, LMS, Inventaris, HRIS, dll) | [→ neocore-tech/koleksi-modul-simaju](https://github.com/neocore-tech/koleksi-modul-simaju) |
-| **simaju-modul-templat** | Template scaffold resmi untuk membuat modul baru | [→ neocore-tech/simaju-modul-templat](https://github.com/neocore-tech/simaju-modul-templat) |
-| **plugin-simaju** | Plugin integrasi pihak ketiga (Email, Payment, Analytics, dll) | [→ neocore-tech/plugin-simaju](https://github.com/neocore-tech/plugin-simaju) |
-| **template-plugin-simaju** | Template scaffold resmi untuk membuat plugin baru | [→ neocore-tech/template-plugin-simaju](https://github.com/neocore-tech/template-plugin-simaju) |
-| **template-tema-simaju** | Koleksi tema tampilan & template UI siap pakai (EJS) | [→ neocore-tech/template-tema-simaju](https://github.com/neocore-tech/template-tema-simaju) |
+| **koleksi-modul-simaju** | Official business modules collection (CRM, LMS, Inventory, HRIS, etc) | [→ neocore-tech/koleksi-modul-simaju](https://github.com/neocore-tech/koleksi-modul-simaju) |
+| **simaju-modul-templat** | Official scaffold template for building new modules | [→ neocore-tech/simaju-modul-templat](https://github.com/neocore-tech/simaju-modul-templat) |
+| **plugin-simaju** | Third-party integration plugins (Email, Payment, Analytics, etc) | [→ neocore-tech/plugin-simaju](https://github.com/neocore-tech/plugin-simaju) |
+| **template-plugin-simaju** | Official scaffold template for building new plugins | [→ neocore-tech/template-plugin-simaju](https://github.com/neocore-tech/template-plugin-simaju) |
+| **template-tema-simaju** | Official UI themes & template collection (EJS) | [→ neocore-tech/template-tema-simaju](https://github.com/neocore-tech/template-tema-simaju) |
 
-> 💡 Untuk memasang modul/plugin/tema, cukup daftarkan namanya di file `simaju.json` lalu jalankan `./mji install:all`.
+> 💡 To install a module/plugin/theme, simply register its name in the `simaju.json` file and run `./mji install:all`.
 
 ---
 
-## 📚 Dokumentasi
+## 📚 Documentation
 
-Dokumentasi teknis lengkap tersedia di folder `Dokumentasi/`:
+Comprehensive technical documentation is available in the `Dokumentasi/` folder:
 
-| File | Isi |
+| File | Content |
 |---|---|
-| `guide_module_development.md` | Cara membuat Modul bisnis baru (MVC) |
-| `guide_plugin_development.md` | Cara membuat Plugin & hooking Event Bus |
-| `guide_theme_development.md` | Cara membuat & mengaktifkan Tema (SSR) |
-| `seo.md` | Panduan lengkap SEO Engine (8 Phase) |
-| `firewall_guard.md` | Dokumentasi SIMAJU Guard |
-| `architecture.md` | Arsitektur folder & alur kerja core |
+| `guide_module_development.md` | How to create a new business Module (MVC) |
+| `guide_plugin_development.md` | How to create a Plugin & hook into the Event Bus |
+| `guide_theme_development.md` | How to create & activate a Theme (SSR) |
+| `seo.md` | Complete SEO Engine Guide (8 Phases) |
+| `firewall_guard.md` | SIMAJU Guard Documentation |
+| `architecture.md` | Folder architecture & core workflow |
 
 ---
 

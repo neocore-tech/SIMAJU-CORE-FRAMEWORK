@@ -1,73 +1,73 @@
 # 🛡️ SIMAJU Guard (Rust Firewall)
 
-**SIMAJU Guard** adalah Web Application Firewall (WAF) dan Reverse Proxy berkinerja sangat tinggi (*Ultra-High Performance*) yang dibangun sepenuhnya menggunakan bahasa pemrograman **Rust**.
+**SIMAJU Guard** is an Ultra-High Performance Web Application Firewall (WAF) and Reverse Proxy built entirely in **Rust**.
 
-SIMAJU Guard bertindak sebagai "Satpam" yang berdiri di garda paling depan (port 8080/8443) sebelum setiap *request* bisa mencapai inti aplikasi SIMAJU Core Node.js (port 3000).
+SIMAJU Guard acts as the "Gatekeeper" standing at the front lines (port 8080/8443) before any *request* can reach the core of the SIMAJU Core Node.js application (port 3000).
 
 ---
 
-## 🚀 Arsitektur Keamanan (Layered Defense)
+## 🚀 Security Architecture (Layered Defense)
 
-Firewall ini menggunakan konsep pertahanan berlapis (*Defense-in-Depth*). Jika peretas lolos dari lapisan pertama, ia masih harus menghadapi lapisan berikutnya sebelum akhirnya diblokir.
+This firewall utilizes a *Defense-in-Depth* concept. If an attacker bypasses the first layer, they still have to face the next layer before ultimately being blocked.
 
-Terdapat **5 Lapisan Pertahanan (Layered Defense)** di dalam Firewall ini:
+There are **5 Layers of Defense** in this Firewall:
 
 ### 1. Gate 1: Network Layer (`layers/network.rs`)
-Lapisan terluar yang melakukan inspeksi IP Address penelepon.
-- **IP Blacklist:** IP yang sudah terkenal buruk (atau dimasukkan secara manual) akan langsung ditolak mentah-mentah (`HTTP 403 Forbidden`).
-- **IP Whitelist:** (Mode ketat) Hanya IP yang terdaftar yang boleh lewat.
-- **Auto-Block:** Jika sebuah IP terdeteksi menyerang berkali-kali, ia akan otomatis masuk daftar Blacklist selama durasi yang ditentukan (misalnya 60 menit).
+The outermost layer that inspects the caller's IP Address.
+- **IP Blacklist:** Known malicious IPs (or manually blacklisted ones) will be outright rejected (`HTTP 403 Forbidden`).
+- **IP Whitelist:** (Strict mode) Only registered IPs are allowed to pass.
+- **Auto-Block:** If an IP is detected attacking multiple times, it will automatically be added to the Blacklist for a specified duration (e.g., 60 minutes).
 
 ### 2. Gate 2: Request Inspector (`layers/inspector.rs`)
-Lapisan yang mengecek pola pengiriman data (*Rate Limiting* & *Size Check*).
-- **Token Bucket Rate Limiter:** Algoritma efisien untuk mencegah serangan *DDoS* dan *Spam*. Jika sebuah IP menembakkan ratusan request dalam sedetik, ia akan diblokir (`HTTP 429 Too Many Requests`). Limit ini bisa diatur secara global maupun per rute spesifik (misal: `/api/v1/auth` lebih ketat).
-- **Body Size Limit:** Menolak muatan (*payload*) raksasa yang bisa membuat memori Node.js bocor atau *Crash* (OOM).
+The layer that checks data transmission patterns (*Rate Limiting* & *Size Check*).
+- **Token Bucket Rate Limiter:** An efficient algorithm to prevent *DDoS* and *Spam* attacks. If an IP fires hundreds of requests in a second, it will be blocked (`HTTP 429 Too Many Requests`). This limit can be configured globally or per specific route (e.g., `/api/v1/auth` is stricter).
+- **Body Size Limit:** Rejects massive payloads that could cause Node.js memory leaks or *Crash* (OOM).
 
 ### 3. Gate 3: WAF Payload Analyzer (`layers/analyzer.rs`)
-Lapisan cerdas (WAF) yang membongkar setiap URL dan Body Request untuk mencari jejak serangan (*Malicious Payload*).
-- **Anti SQL Injection:** Memblokir pola `OR 1=1`, `UNION SELECT`, `DROP TABLE`, dan injeksi komentar `--`.
-- **Anti XSS (Cross-Site Scripting):** Memblokir tag `<script>` nakal, `onerror=`, atau skema javascript berbahaya.
-- **Anti Path Traversal:** Memblokir upaya membaca file rahasia server (misal: `../../../../etc/passwd`).
-- **Anti Command Injection:** Memblokir injeksi perintah OS (misal: `; rm -rf /` atau `wget ...`).
+The smart layer (WAF) that unpacks every URL and Request Body to look for malicious patterns (*Malicious Payload*).
+- **Anti SQL Injection:** Blocks `OR 1=1`, `UNION SELECT`, `DROP TABLE` patterns, and `--` comment injections.
+- **Anti XSS (Cross-Site Scripting):** Blocks malicious `<script>` tags, `onerror=`, or dangerous javascript schemas.
+- **Anti Path Traversal:** Blocks attempts to read secret server files (e.g., `../../../../etc/passwd`).
+- **Anti Command Injection:** Blocks OS command injections (e.g., `; rm -rf /` or `wget ...`).
 
 ### 4. Gate 4: Auth Protection (`layers/auth.rs`)
-Penjaga khusus untuk melindungi gerbang Login dari serangan *Brute Force* (tebakan password membabi buta).
-- Jika ada IP yang gagal login (respon 401 dari Node.js) sebanyak 5 kali berturut-turut, IP tersebut otomatis akan **dikunci (Lockout)** dari halaman login selama 15 menit. Request login mereka selanjutnya tidak akan diteruskan ke Node.js.
+A specialized guard to protect the Login gate from *Brute Force* attacks (blind password guessing).
+- If an IP fails to log in (receives a 401 response from Node.js) 5 consecutive times, that IP will automatically be **Locked Out** from the login page for 15 minutes. Their subsequent login requests will not be forwarded to Node.js.
 
 ### 5. Gate 5: Admin API & Metrics (`admin/handlers.rs`)
-Jalur khusus admin untuk memantau aktivitas secara diam-diam. Berjalan di port rahasia (default 9000).
-- **Prometheus Metrics (`/metrics`):** Menyediakan metrik untuk Grafana (jumlah trafik, total request yang diblokir, dsb).
-- **Manual Override API:** Anda bisa secara remote menambah IP ke daftar blokir (`POST /admin/block-ip`) atau melepas blokiran (`POST /admin/unblock-ip`) menggunakan Admin Key.
+A dedicated admin channel to silently monitor activity. Runs on a secret port (default 9000).
+- **Prometheus Metrics (`/metrics`):** Provides metrics for Grafana (total traffic, total blocked requests, etc.).
+- **Manual Override API:** You can remotely add an IP to the blocklist (`POST /admin/block-ip`) or unblock it (`POST /admin/unblock-ip`) using the Admin Key.
 
 ---
 
-## 🛠️ Panduan Penggunaan CLI
+## 🛠️ CLI Usage Guide
 
-Firewall Rust ini telah terintegrasi dengan mulus ke dalam perintah `mji`. Anda tidak perlu susah payah menyalakannya secara manual.
+This Rust Firewall is seamlessly integrated into the `mji` command. You do not need to struggle to start it manually.
 
 ```bash
-# REKOMENDASI: Menyalakan SIMAJU Core & Firewall Guard bersamaan
+# RECOMMENDED: Start SIMAJU Core & Firewall Guard simultaneously
 ./mji up
 
-# Menyalakan Framework Node.js saja (Jika sedang mendesain kode)
+# Start Node.js Framework only (If designing code)
 ./mji dev
 
-# Menyalakan Rust Firewall saja (untuk debugging)
+# Start Rust Firewall only (for debugging)
 ./mji guard
 ```
 
 ---
 
-## ⚙️ Konfigurasi (guard.toml)
+## ⚙️ Configuration (guard.toml)
 
-Semua aturan keamanan Firewall dikendalikan secara dinamis melalui file `guard/guard.toml`. Anda bisa mengubah aturan ini tanpa harus melakukan *recompile* kode Rust.
+All Firewall security rules are dynamically controlled via the `guard/guard.toml` file. You can change these rules without having to *recompile* the Rust code.
 
-Contoh snippet konfigurasi:
+Example configuration snippet:
 ```toml
 [server]
 port      = 8080
 admin_port = 9000
-admin_key  = "KUNCI_RAHASIA_ANDA"
+admin_key  = "YOUR_SECRET_KEY"
 
 [rate_limit]
 enabled             = true
@@ -91,11 +91,11 @@ detect_command_injection  = true
 
 ## 🚀 Deployment (Production)
 
-SIMAJU Guard di-desain ultra-ringan:
+SIMAJU Guard is designed to be ultra-lightweight:
 - **Binary Size:** < 15 MB
 - **RAM Usage:** ~10 MB under load
 - **Latency:** < 1ms overhead
 
-Untuk lingkungan *Production*, silakan gunakan `guard/Dockerfile` untuk membangun *image* Alpine Linux yang super kecil, atau jalankan menggunakan daemon yang sudah disediakan: `guard/simaju-guard.service` (Systemd Linux).
+For *Production* environments, please use `guard/Dockerfile` to build a super small Alpine Linux *image*, or run it using the provided daemon: `guard/simaju-guard.service` (Linux Systemd).
 
-*Kini aplikasi Anda aman layaknya benteng perusahaan elit!* 🛡️
+*Your application is now as secure as an elite corporate fortress!* 🛡️

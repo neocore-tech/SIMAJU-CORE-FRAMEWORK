@@ -1,62 +1,62 @@
-# 📦 Panduan Pengembangan Module
+# 📦 Module Development Guide
 
-Di dalam arsitektur **SIMAJU Core Framework**, sebuah **Module** adalah unit fungsionalitas terbesar. Modul berisi logika bisnis lengkap (seperti LMS, CRM, Billing) yang berjalan di dalam *core engine*.
+Within the **SIMAJU Core Framework** architecture, a **Module** is the largest unit of functionality. A module contains complete business logic (such as LMS, CRM, Billing) that runs inside the *core engine*.
 
-Berbeda dengan *Plugin* yang biasanya hanya menempel/menyisipkan fungsi kecil, sebuah *Module* memiliki *Router*, *Controller*, *Service*, dan *Database Migration* sendiri.
+Unlike a *Plugin* which usually only attaches/injects small functions, a *Module* has its own *Router*, *Controller*, *Service*, and *Database Migration*.
 
 ---
 
-## 1. Struktur Direktori Module
+## 1. Module Directory Structure
 
-Setiap module harus diletakkan di dalam folder `src/modules/<nama_module>`. Berikut adalah standar strukturnya:
+Every module must be placed inside the `src/modules/<module_name>` folder. Here is the standard structure:
 
 ```text
-src/modules/inventaris/
-├── index.js                  # Entry point module (registrasi rute)
-├── inventaris.controller.js  # Menangani HTTP request & response
-├── inventaris.service.js     # Menangani logika bisnis & query database
-├── inventaris.route.js       # Mendefinisikan endpoint API (Axios/Router)
-└── /tests/                   # (Opsional) Unit test khusus module ini
+src/modules/inventory/
+├── index.js                  # Module entry point (route registration)
+├── inventory.controller.js   # Handles HTTP requests & responses
+├── inventory.service.js      # Handles business logic & database queries
+├── inventory.route.js        # Defines API endpoints (Router)
+└── /tests/                   # (Optional) Specific unit tests for this module
 ```
 
 ---
 
-## 2. Cara Membuat Module Baru
+## 2. How to Create a New Module
 
-Anda tidak perlu membuat file secara manual. SIMAJU Core telah dilengkapi dengan alat CLI otomatis (Scaffolding) menggunakan perintah `mji`.
+You don't need to create files manually. SIMAJU Core comes with an automated CLI tool (Scaffolding) using the `mji` command.
 
-### Langkah 1: Generate Skeleton
-Gunakan perintah CLI berikut di terminal Anda:
+### Step 1: Generate Skeleton
+Use the following CLI command in your terminal:
 ```bash
-mji make:module inventaris
+mji make:module inventory
 ```
-Perintah ini akan secara otomatis membuat folder `src/modules/inventaris` beserta seluruh kerangka file `.controller.js`, `.service.js`, dan `.route.js` yang sudah saling terhubung.
+This command will automatically create the `src/modules/inventory` folder along with the entire skeleton of `.controller.js`, `.service.js`, and `.route.js` files that are already interconnected.
 
-### Langkah 2: Registrasi Module (Otomatis)
-Jika Anda menggunakan perintah `mji make:module`, module akan langsung terdeteksi otomatis oleh *auto-loader* di `src/core/app.js`.
+### Step 2: Module Registration (Automatic)
+If you use the `mji make:module` command, the module will be automatically detected by the *auto-loader* in `src/core/app.js`.
 
-Namun jika tidak terdeteksi, pastikan struktur `index.js` di dalam module Anda me-*return* rute dengan benar:
+However, if it is not detected, make sure the `index.js` structure in your module returns the routes correctly:
 
 ```javascript
-// src/modules/inventaris/index.js
-const inventarisRoute = require('./inventaris.route');
+// src/modules/inventory/index.js
+const inventoryRoute = require('./inventory.route');
 
 module.exports = {
-  routes: inventarisRoute
+  routes: inventoryRoute
 };
 ```
 
 ---
 
-## 3. Alur Kerja MVC (Model-Service-Controller)
+## 3. MVC Workflow (Model-Service-Controller)
 
-Untuk menjaga kode tetap bersih (*Clean Architecture*), SIMAJU Core memisahkan logika ke dalam 3 lapisan utama:
+To keep the code clean (*Clean Architecture*), SIMAJU Core separates logic into 3 main layers:
 
 ### A. Route Layer (`.route.js`)
-Hanya bertugas mendaftarkan URL dan *middleware* keamanan (contoh: autentikasi JWT).
+Only responsible for registering URLs and security *middleware* (example: JWT authentication).
 ```javascript
 const router = require('express').Router();
-const controller = require('./inventaris.controller');
+const controller = require('./inventory.controller');
 const authMiddleware = require('../../core/middleware/auth.middleware');
 
 router.get('/', authMiddleware, controller.getAllItems);
@@ -66,16 +66,16 @@ module.exports = router;
 ```
 
 ### B. Controller Layer (`.controller.js`)
-Hanya bertugas menangani Request (`req`) dan Response (`res`). **Dilarang** menulis *query database* atau logika bisnis rumit di sini.
+Only responsible for handling Requests (`req`) and Responses (`res`). **Do not** write *database queries* or complex business logic here.
 ```javascript
-const service = require('./inventaris.service');
+const service = require('./inventory.service');
 
 const getAllItems = async (req, res, next) => {
   try {
     const data = await service.fetchAllItems();
     res.json({ success: true, data });
   } catch (error) {
-    next(error); // Lempar ke Error Handler Core
+    next(error); // Throw to Core Error Handler
   }
 };
 
@@ -83,13 +83,13 @@ module.exports = { getAllItems };
 ```
 
 ### C. Service Layer (`.service.js`)
-Di sinilah seluruh logika bisnis dan interaksi dengan *Database Query Builder* diletakkan.
+This is where all business logic and interaction with the *Database Query Builder* are placed.
 ```javascript
 const db = require('../../core/database');
 
 const fetchAllItems = async () => {
-  // Contoh menggunakan Knex Query Builder atau Sequelize
-  return await db('inventaris_items').select('*').where('is_active', true);
+  // Example using Knex Query Builder or Sequelize
+  return await db('inventory_items').select('*').where('is_active', true);
 };
 
 module.exports = { fetchAllItems };
@@ -97,8 +97,8 @@ module.exports = { fetchAllItems };
 
 ---
 
-## 4. Keamanan Module
+## 4. Module Security
 
-* **Gunakan Middleware Auth:** Pastikan setiap *endpoint* yang mengubah data (`POST`, `PUT`, `DELETE`) dilindungi oleh `authMiddleware`.
-* **Gunakan Validasi:** Validasilah payload body menggunakan Joi atau Zod sebelum memproses data di dalam Service.
-* **Hindari Hardcode:** Selalu gunakan Environment Variable (`process.env.VARIABLE_NAME`) untuk menyimpan *secret* pihak ketiga yang spesifik untuk modul Anda.
+* **Use Auth Middleware:** Ensure every *endpoint* that modifies data (`POST`, `PUT`, `DELETE`) is protected by `authMiddleware`.
+* **Use Validation:** Validate the body payload using Joi or Zod before processing the data in the Service.
+* **Avoid Hardcoding:** Always use Environment Variables (`process.env.VARIABLE_NAME`) to store third-party *secrets* specific to your module.

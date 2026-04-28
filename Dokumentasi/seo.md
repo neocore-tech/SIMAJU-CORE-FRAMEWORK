@@ -1,51 +1,51 @@
-# 🚀 Panduan SEO Engine (SIMAJU Core)
+# 🚀 SEO Engine Guide (SIMAJU Core)
 
-Sistem SEO di dalam SIMAJU Core dirancang secara bertahap (Phase) untuk memastikan aplikasi Anda ramah terhadap mesin pencari (Google, Bing, dll) dan memiliki performa *Core Web Vitals* yang sangat baik.
+The SEO system within SIMAJU Core is designed in phases to ensure your application is search engine friendly (Google, Bing, etc.) and has excellent *Core Web Vitals* performance.
 
-Dokumentasi ini menjelaskan tahapan implementasi modul `/seo` dari fondasi dasar hingga sistem otomasi SEO tingkat lanjut.
-
----
-
-## 🚀 PHASE 1 — Foundation (WAJIB HIDUP DULU)
-**Goal:** Website bisa di-crawl & di-index dengan benar
-
-### 🔧 Module Dasar
-```text
-src/seo/
- ├── meta.js      # Generate tag meta dinamis per halaman
- ├── robots.js    # Mengatur rule robots.txt
- ├── sitemap.js   # Generate sitemap.xml otomatis
- └── schema.js    # Schema JSON-LD dasar (Organization/Website)
-```
-
-### 🎯 Implementasi & Output
-- **Meta Dinamis:** Setiap halaman memiliki `title`, `description`, dan `keywords` unik.
-- **Output:** Seluruh halaman siap dibaca oleh Googlebot, Sitemap bisa diakses, dan tidak ada pemblokiran *crawling* yang salah.
+This documentation explains the implementation stages of the `/seo` module from basic foundation to an advanced automated SEO system.
 
 ---
 
-## ⚡ PHASE 2 — Index Control & Struktur
-**Goal:** Menghindari *duplicate content* dan merapikan struktur URL
+## 🚀 PHASE 1 — Foundation (MUST BE LIVE FIRST)
+**Goal:** Website can be crawled & indexed properly
 
-### 🔧 Module Lanjutan
+### 🔧 Basic Modules
 ```text
 src/seo/
- ├── canonical.js # Penanda canonical link
- ├── slug.js      # Generator slug URL yang SEO-friendly
- └── redirect.js  # Manajemen Redirect 301/302
+ ├── meta.js      # Generate dynamic meta tags per page
+ ├── robots.js    # Manage robots.txt rules
+ ├── sitemap.js   # Generate sitemap.xml automatically
+ └── schema.js    # Basic JSON-LD Schema (Organization/Website)
 ```
 
-### 🎯 Implementasi & Output
-- **Canonical:** Mencegah Google bingung jika ada URL dengan parameter (contoh: `?page=2` atau `?source=fb`).
-- **Redirect 301:** Sangat penting untuk menjaga *link juice* jika ada perubahan URL konten lama.
-- **Output:** Tidak ada peringatan *Duplicate Content* di Google Search Console. URL rapi dan konsisten.
+### 🎯 Implementation & Output
+- **Dynamic Meta:** Each page has a unique `title`, `description`, and `keywords`.
+- **Output:** All pages are ready to be read by Googlebot, Sitemap is accessible, and there is no incorrect crawling block.
+
+---
+
+## ⚡ PHASE 2 — Index Control & Structure
+**Goal:** Avoid duplicate content and tidy up URL structures
+
+### 🔧 Advanced Modules
+```text
+src/seo/
+ ├── canonical.js # Canonical link markers
+ ├── slug.js      # SEO-friendly URL slug generator
+ └── redirect.js  # 301/302 Redirect Management
+```
+
+### 🎯 Implementation & Output
+- **Canonical:** Prevents Google from getting confused if there are URLs with parameters (e.g., `?page=2` or `?source=fb`).
+- **301 Redirect:** Extremely important to maintain link juice if there are old content URL changes.
+- **Output:** No Duplicate Content warnings in Google Search Console. URLs are neat and consistent.
 
 ---
 
 ## 🔥 PHASE 3 — Rich Result & Visibility
-**Goal:** Menaikkan *Click-Through Rate (CTR)* dan tampil menonjol (Rich Snippets) di hasil pencarian.
+**Goal:** Increase Click-Through Rate (CTR) and stand out (Rich Snippets) in search results.
 
-### 🔧 Upgrade Schema
+### 🔧 Schema Upgrade
 ```text
 src/seo/schema/
  ├── Article.js
@@ -53,99 +53,99 @@ src/seo/schema/
  └── Breadcrumb.js
 ```
 
-### 🎯 Implementasi & Output
-- Menginjeksi `JSON-LD` otomatis berdasarkan tipe konten.
-- **Output:** Halaman artikel bisa muncul dengan *thumbnail* di pencarian, FAQ muncul sebagai akordion di Google, navigasi *breadcrumb* terdeteksi dengan jelas.
+### 🎯 Implementation & Output
+- Automatically injects `JSON-LD` based on content type.
+- **Output:** Article pages can appear with a thumbnail in search, FAQs appear as an accordion on Google, breadcrumb navigation is clearly detected.
 
 ---
 
 ## 🌐 PHASE 4 — Social & Sharing
-**Goal:** Memastikan link website terlihat profesional saat dibagikan ke media sosial (WhatsApp, Facebook, Twitter, LinkedIn).
+**Goal:** Ensure website links look professional when shared on social media (WhatsApp, Facebook, Twitter, LinkedIn).
 
-### 🔧 Module Social
+### 🔧 Social Modules
 ```text
 src/seo/
- ├── openGraph.js   # Untuk Facebook, WA, LinkedIn
- └── twitterCard.js # Khusus untuk Twitter/X
+ ├── openGraph.js   # For Facebook, WA, LinkedIn
+ └── twitterCard.js # Specific for Twitter/X
 ```
 
-### 🎯 Implementasi & Output
-- Menambahkan tag `og:title`, `og:image`, `twitter:card`, dll.
-- Mendukung *Dynamic Thumbnail* (mengambil gambar pertama artikel sebagai *cover* link).
-- **Output:** *Share link* menjadi kartu besar (*large image card*) yang menarik untuk di-klik.
+### 🎯 Implementation & Output
+- Adds `og:title`, `og:image`, `twitter:card` tags, etc.
+- Supports Dynamic Thumbnails (taking the first image of the article as the link cover).
+- **Output:** Shared links become large image cards that are attractive to click.
 
 ---
 
 ## ⚡ PHASE 5 — Performance SEO
-**Goal:** Skor *Core Web Vitals* bagus (Ranking Boost langsung dari Google)
+**Goal:** Good Core Web Vitals scores (Direct Ranking Boost from Google)
 
-### 🔧 Module Performa
+### 🔧 Performance Modules
 ```text
 src/seo/
- ├── imageSeo.js    # Optimasi gambar
- └── performance.js # Minify dan struktur aset
+ ├── imageSeo.js    # Image optimization
+ └── performance.js # Minify and asset structuring
 ```
 
-### 🎯 Implementasi & Output
-- **Image:** Implementasi `loading="lazy"`, atribut `alt` otomatis, dan konversi ke format `WebP`.
-- **Output:** Page Speed Insights skor naik drastis. LCP (Largest Contentful Paint) dan CLS (Cumulative Layout Shift) berada di zona hijau (Aman).
+### 🎯 Implementation & Output
+- **Image:** Implementation of `loading="lazy"`, automatic `alt` attributes, and conversion to `WebP` format.
+- **Output:** Page Speed Insights score rises drastically. LCP (Largest Contentful Paint) and CLS (Cumulative Layout Shift) are in the green (Safe) zone.
 
 ---
 
 ## 🧠 PHASE 6 — Internal SEO Engine
-**Goal:** Memperkuat arsitektur konten secara internal agar *Bounce Rate* turun.
+**Goal:** Strengthen internal content architecture to reduce Bounce Rate.
 
-### 🔧 Module Arsitektur Konten
+### 🔧 Content Architecture Modules
 ```text
 src/seo/
- ├── internalLink.js # Auto-linking kata kunci tertentu
- └── contentSeo.js   # Analisis densitas keyword
+ ├── internalLink.js # Auto-linking specific keywords
+ └── contentSeo.js   # Keyword density analysis
 ```
 
-### 🎯 Implementasi & Output
-- **Auto Internal Linking:** Jika ada kata "SIMAJU", otomatis diberi *link* ke halaman *About*.
-- Menyediakan artikel terkait (*Related Posts*) yang benar-benar relevan secara semantik.
-- **Output:** Pengunjung lebih lama berada di web (*Session Duration* naik).
+### 🎯 Implementation & Output
+- **Auto Internal Linking:** If there is the word "SIMAJU", it is automatically linked to the About page.
+- Provides Related Posts that are truly semantically relevant.
+- **Output:** Visitors stay longer on the web (Session Duration increases).
 
 ---
 
 ## 🤖 PHASE 7 — Automation System
-**Goal:** SEO berjalan dengan sendirinya (Auto-Pilot) tanpa input manual dari Admin.
+**Goal:** SEO runs by itself (Auto-Pilot) without manual input from Admins.
 
-### 🔧 Module Otomasi
+### 🔧 Automation Modules
 ```text
 src/seo/
- ├── autoMeta.js    # Ekstrak deskripsi dari paragraf pertama
- ├── autoSchema.js  # Deteksi struktur secara pintar
- └── autoSitemap.js # Ping ke Google tiap kali ada artikel baru
+ ├── autoMeta.js    # Extracts description from the first paragraph
+ ├── autoSchema.js  # Smartly detects structure
+ └── autoSitemap.js # Pings Google every time there's a new article
 ```
 
-### 🎯 Implementasi & Output
-- Menghapus beban *Content Writer* untuk selalu mengisi meta.
-- *Sitemap* otomatis ter-*update* ke Google dalam hitungan detik setelah di-*publish*.
-- **Output:** Skalabilitas konten tanpa hambatan teknis.
+### 🎯 Implementation & Output
+- Removes the burden from Content Writers to always fill in meta.
+- Sitemap automatically updates to Google within seconds after publishing.
+- **Output:** Content scalability without technical barriers.
 
 ---
 
 ## 📊 PHASE 8 — Monitoring & Tools
-**Goal:** Mengetahui "Kesehatan" SEO website langsung dari dalam framework.
+**Goal:** Know the "Health" of website SEO directly from within the framework.
 
-### 🔧 Module Monitoring
+### 🔧 Monitoring Modules
 ```text
 src/seo/
- ├── seoLogger.js # Catat 404 (Broken Links)
- └── crawler.js   # Cek index status
+ ├── seoLogger.js # Logs 404 (Broken Links)
+ └── crawler.js   # Checks index status
 ```
 
-### 🎯 Implementasi & Output
-- Melacak jika ada *Broken Link* yang dihasilkan oleh user/admin.
-- **Output:** Anda tahu persis apa masalah SEO Anda sebelum Google menurunkan *ranking* Anda.
+### 🎯 Implementation & Output
+- Tracks if there are Broken Links generated by users/admins.
+- **Output:** You know exactly what your SEO problems are before Google drops your ranking.
 
 ---
 
-## 🧱 FINAL STRUKTUR MODULE `/seo` (Production Ready)
+## 🧱 FINAL MODULE `/seo` STRUCTURE (Production Ready)
 
-Berikut adalah wujud akhir struktur direktori mesin SEO kita di dalam `src/seo/`:
+Here is the final directory structure of our SEO engine inside `src/seo/`:
 
 ```text
 src/seo/
@@ -171,14 +171,14 @@ src/seo/
 
 ---
 
-## 🎯 PRIORITAS RILIS (Bila Waktu Terbatas)
+## 🎯 RELEASE PRIORITY (If Time is Limited)
 
-Jika aplikasi harus rilis dalam waktu dekat, fokus pada tahapan ini terlebih dahulu:
-1. **Phase 1** (Wajib Mutlak)
-2. **Phase 2** (Sangat Wajib - Mencegah *Duplicate Content*)
+If the application must be released soon, focus on these stages first:
+1. **Phase 1** (Absolute Must)
+2. **Phase 2** (Highly Must - Prevents Duplicate Content)
 3. **Phase 3** (High Impact - Rich Snippet)
-4. **Phase 5** (Ranking Boost lewat Kecepatan)
+4. **Phase 5** (Ranking Boost via Speed)
 
 > [!TIP]
-> **Tips Nyata di Lapangan:**
-> Banyak developer hanya berhenti di pembuatan *Sitemap* dan *Meta tag*. Padahal, untuk mendominasi Google di tahun 2024+, kekuatan sebenarnya berada di **Internal Linking**, **Schema JSON-LD**, dan **Performa Web Vitals**. Pastikan Anda mengimplementasikan Phase 3, 5, dan 6!
+> **Real World Tips:**
+> Many developers only stop at creating a Sitemap and Meta tags. However, to dominate Google in 2024+, the real power lies in **Internal Linking**, **Schema JSON-LD**, and **Web Vitals Performance**. Ensure you implement Phases 3, 5, and 6!

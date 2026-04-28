@@ -1,37 +1,37 @@
-# 🎨 Panduan Pengembangan Tema (Theme)
+# 🎨 Theme Development Guide
 
-**SIMAJU Core Framework** tidak hanya menyediakan REST API (Backend), tetapi juga dilengkapi kemampuan *Server-Side Rendering* (SSR) mumpuni menggunakan mesin EJS/Pug yang dimotori oleh arsitektur **Theme Engine**.
+The **SIMAJU Core Framework** doesn't just provide a REST API (Backend); it also comes with capable *Server-Side Rendering* (SSR) capabilities using the EJS/Pug engine powered by the **Theme Engine** architecture.
 
-Tema bertugas mengatur seluruh elemen UI/UX, tata letak (*layout*), dan aset publik (*CSS/JS*) yang akan dilihat langsung oleh klien atau pelanggan di peramban web.
-
----
-
-## 1. Konsep Tema di SIMAJU
-
-Alih-alih mencampur-adukkan kode HTML di dalam *Core* atau *Module*, Anda memisahkan semua desain visual ke dalam folder `resources/views/themes/`.
-Framework ini mendukung sistem **Switchable Themes** layaknya CMS modern. Anda bisa mengubah tampilan aplikasi Anda secara instan hanya dengan mengubah nama tema yang aktif di pengaturan!
+A Theme is responsible for managing all UI/UX elements, layouts, and public assets (*CSS/JS*) that clients or customers will see directly in their web browsers.
 
 ---
 
-## 2. Struktur Direktori Tema
+## 1. Theme Concept in SIMAJU
 
-Sebuah tema memiliki kumpulan *View* dan sebuah manifest pendamping. Struktur standarnya seperti ini:
+Instead of mixing HTML code within the *Core* or *Modules*, you separate all visual designs into the `resources/views/themes/` folder.
+This framework supports a **Switchable Themes** system, much like modern CMSs. You can change your application's appearance instantly just by changing the active theme name in the settings!
+
+---
+
+## 2. Theme Directory Structure
+
+A theme consists of a collection of *Views* and an accompanying manifest. The standard structure looks like this:
 
 ```text
 resources/
 ├── views/
 │   └── themes/
-│       └── corporate-modern/      # <--- Nama Tema
-│           ├── theme.json         # Metadata tema (Wajib)
-│           ├── layout.ejs         # Template induk (Header, Footer, Nav)
-│           ├── index.ejs          # Halaman beranda utama
+│       └── corporate-modern/      # <--- Theme Name
+│           ├── theme.json         # Theme Metadata (Required)
+│           ├── layout.ejs         # Master Template (Header, Footer, Nav)
+│           ├── index.ejs          # Main homepage
 │           ├── auth/
-│           │   ├── login.ejs      # Tampilan halaman login
-│           │   └── register.ejs   # Tampilan halaman pendaftaran
-│           └── partials/          # Potongan kode (Sidebar, Modal)
+│           │   ├── login.ejs      # Login page view
+│           │   └── register.ejs   # Registration page view
+│           └── partials/          # Code snippets (Sidebar, Modal)
 └── assets/
     └── themes/
-        └── corporate-modern/      # <--- Aset Publik Tema
+        └── corporate-modern/      # <--- Theme Public Assets
             ├── css/style.css
             ├── js/app.js
             └── img/logo.png
@@ -39,31 +39,31 @@ resources/
 
 ---
 
-## 3. Cara Membangun Tema
+## 3. How to Build a Theme
 
-### Langkah 1: Buat Direktori dan File `theme.json`
-`theme.json` wajib berada di akar folder tema Anda. File ini memberitahukan identitas tema kepada SIMAJU.
+### Step 1: Create the Directory and `theme.json` File
+The `theme.json` file must be at the root of your theme folder. This file tells SIMAJU the theme's identity.
 
 ```json
 {
   "name": "corporate-modern",
   "displayName": "Corporate Modern UI",
-  "author": "Nama Anda",
+  "author": "Your Name",
   "version": "1.0.0",
-  "description": "Tema perusahaan dengan tampilan modern yang responsif."
+  "description": "A corporate theme with a responsive modern look."
 }
 ```
 
-### Langkah 2: Membangun Layout Induk (`layout.ejs`)
-Agar Anda tidak perlu menulis kode HTML `<html><head>` berulang-ulang, buatlah satu layout master yang memuat fungsi bawaan EJS, contoh: `<%- body %>`.
+### Step 2: Building the Master Layout (`layout.ejs`)
+So you don't have to write the `<html><head>` HTML code repeatedly, create a single master layout that contains the built-in EJS function, for example: `<%- body %>`.
 
 ```html
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><%= pageTitle || 'Selamat Datang' %></title>
-    <!-- Meload CSS publik secara otomatis dari folder public/assets -->
+    <title><%= pageTitle || 'Welcome' %></title>
+    <!-- Automatically load public CSS from the public/assets folder -->
     <link rel="stylesheet" href="/assets/themes/corporate-modern/css/style.css">
 </head>
 <body>
@@ -73,44 +73,44 @@ Agar Anda tidak perlu menulis kode HTML `<html><head>` berulang-ulang, buatlah s
     </header>
 
     <main>
-        <!-- Konten spesifik halaman akan dirender di bawah ini -->
+        <!-- Page-specific content will be rendered below -->
         <%- body %>
     </main>
 
     <footer>
-        <p>&copy; 2026 Perusahaan Anda</p>
+        <p>&copy; 2026 Your Company</p>
     </footer>
 
 </body>
 </html>
 ```
 
-### Langkah 3: Menulis Konten Spesifik Halaman (`index.ejs`)
-Halaman lain bisa menggunakan layout induk tersebut:
+### Step 3: Writing Page-Specific Content (`index.ejs`)
+Other pages can use this master layout:
 
 ```html
 <% layout('layout') %>
 
 <div class="hero">
-    <h1>Halo, <%= user ? user.name : 'Tamu' %>!</h1>
-    <p>Ini adalah halaman utama menggunakan tema Corporate Modern.</p>
+    <h1>Hello, <%= user ? user.name : 'Guest' %>!</h1>
+    <p>This is the main page using the Corporate Modern theme.</p>
 </div>
 ```
 
 ---
 
-## 4. Cara Mengaktifkan Tema
+## 4. How to Activate a Theme
 
-Sistem tema di SIMAJU Core dapat diubah via CLI `mji` atau konfigurasi `simaju.json`.
+The theme system in SIMAJU Core can be changed via the `mji` CLI or the `simaju.json` configuration.
 
-**Menggunakan CLI:**
+**Using CLI:**
 ```bash
 mji theme:use corporate-modern
 ```
-Perintah ini akan secara otomatis memindahkan *pointer* rendering engine untuk menggunakan folder `corporate-modern` dan mengekspos `resources/assets/themes/corporate-modern/` ke dalam folder statik `public/`.
+This command will automatically point the rendering engine to use the `corporate-modern` folder and expose `resources/assets/themes/corporate-modern/` into the static `public/` folder.
 
 ---
 
-## 5. Standar Penulisan Aset (CSS & JS)
-Semua aset (*CSS, JavaScript, Images, Fonts*) yang berkaitan dengan tampilan tema secara visual **DILARANG** dimasukkan ke dalam folder `views`. 
-Semua aset harus diletakkan terpisah di folder `resources/assets/themes/<nama-tema>/` dan nantinya dapat di-build atau di-*publish* secara otomatis ke folder `public/` oleh framework SIMAJU saat deployment.
+## 5. Asset Writing Standards (CSS & JS)
+All assets (*CSS, JavaScript, Images, Fonts*) related to the theme's visual appearance **MUST NOT** be placed inside the `views` folder.
+All assets must be placed separately in the `resources/assets/themes/<theme-name>/` folder. They can later be automatically built or *published* into the `public/` folder by the SIMAJU framework during deployment.
