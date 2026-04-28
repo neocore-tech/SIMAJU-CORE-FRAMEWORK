@@ -1,4 +1,4 @@
-# <p align="center"><img src="src/public/images/logo-full.png" alt="Simaju Core Logo" width="400"></p>
+# <p align="center">Simaju Core Framework</p>
 
 <p align="center">
   <strong>Simaju Core Framework</strong><br>
@@ -6,62 +6,66 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/architecture-modular_sparse_checkout-success.svg" alt="Architecture">
   <img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node Support">
-  <img src="https://img.shields.io/badge/license-ISC-orange.svg" alt="License">
 </p>
 
 ---
 
 ## 🚀 Apa itu Simaju Core?
 
-**Simaju Core** adalah framework backend modern yang dirancang untuk kecepatan, modularitas, dan skalabilitas. Dengan sistem **Plugin Dinamis** dan **Modular Architecture**, Simaju Core memungkinkan Anda membangun aplikasi kompleks dengan struktur yang sangat rapi dan mudah dikelola.
+**Simaju Core** telah berevolusi menjadi framework berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul-modul esensial (*Auth*, *User*, *Role*). 
 
-## ✨ Fitur Unggulan
+Seluruh modul bisnis ekstensi (CRM, Inventory, CMS, dll) dikelola di sebuah **Monorepo Cloud** yang bisa di-*download* secara selektif menggunakan teknologi **Git Sparse-Checkout** layaknya menggunakan `npm` atau `composer`.
 
-*   📦 **Modular Architecture**: Pisahkan fitur bisnis Anda ke dalam modul-modul independen (Controller, Service, Route).
-*   🔌 **Dynamic Plugin System**: Pasang dan lepas fitur tambahan (seperti Blog, Payment, WhatsApp) tanpa mengganggu kode utama.
-*   🛠️ **Powerful CLI**: Generator otomatis untuk modul, migrasi, dan instalasi plugin langsung dari Git.
+## ✨ Fitur Unggulan V2
+
+*   📦 **Sparse-Checkout Modular System**: Pasang hanya modul bisnis yang Anda butuhkan langsung dari Cloud Monorepo tanpa membebani sistem Anda.
+*   🔌 **Dynamic Discovery**: Router dan Plugin Manager sekarang 100% dinamis. Cukup masukkan folder modul ke `src/modules/` dan framework akan mendeteksinya otomatis tanpa registrasi manual.
+*   🛠️ **Powerful Bulk Installer**: Atur infrastruktur Anda di `simaju.json` dan instal seluruh ekosistem dengan satu baris perintah.
 *   💾 **Multi-DB Support**: Mendukung SQLite, MySQL, dan PostgreSQL dengan migrasi terpadu.
-*   ⚡ **Agentic Ready**: Dirancang agar ramah bagi pengembangan berbasis AI dan agen coding.
-*   🎨 **Premium UI Dashboard**: Dashboard admin bawaan yang elegan untuk memantau plugin dan status sistem.
+*   🎨 **Premium UI Dashboard**: Dilengkapi sistem Tema (Theme Engine) berbasis EJS yang sepenuhnya bisa dikustomisasi (*overrideable*).
 
 ## 🛠️ Instalasi Cepat
 
-Simaju Core dilengkapi dengan **Interactive Setup Wizard** untuk membantu Anda memulai dalam hitungan detik.
+### 1. Kloning Core Framework
+```bash
+git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
+cd SIMAJU-CORE-FRAMEWORK
+```
 
-1. **Clone Repositori**
-   ```bash
-   git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
-   cd SIMAJU-CORE-FRAMEWORK
-   ```
+### 2. Konfigurasi Instalasi Modul (`simaju.json`)
+Atur modul bisnis apa saja yang ingin Anda pasang di file `simaju.json`:
+```json
+{
+  "registry": {
+    "modules": "https://github.com/neocore-tech/simaju-modules-collection.git"
+  },
+  "modules": [
+    "crm",
+    "inventory"
+  ]
+}
+```
 
-2. **Jalankan Setup Wizard**
-   ```bash
-   ./simaju init
-   ```
-   *Pilih database Anda, masukkan nama aplikasi, dan pilih modul dasar yang ingin diaktifkan.*
+### 3. Eksekusi Instalasi Otomatis
+```bash
+./simaju install:all
+```
+*Sistem akan otomatis mengekstrak spesifik folder `crm` dan `inventory` secara gaib dari repository utama.*
 
-3. **Jalankan Migrasi**
-   ```bash
-   ./simaju db:migrate
-   ```
+### 4. Mulai Server
+```bash
+./simaju db:migrate
+npm run dev
+```
 
-4. **Mulai Server**
-   ```bash
-   npm run dev
-   ```
-
-## 📖 Dokumentasi
-
-Dokumentasi lengkap dapat diakses secara lokal melalui browser setelah server berjalan di:
-`http://localhost:3000/docs`
-
-Atau baca panduan dasar di folder `Dokumentasi/`.
-
-## 🤝 Kontribusi
-
-Kami sangat terbuka untuk kontribusi modul dan plugin! Silakan kunjungi repositori [Simaju Modules](https://github.com/neocore-tech/simaju-modules) untuk berbagi modul Anda dengan komunitas.
+## 📚 Boilerplate Templates
+Kami juga menyediakan template dasar jika Anda ingin membuat ekstensi sendiri:
+- [Module Template](https://github.com/neocore-tech/simaju-module-template)
+- [Plugin Template](https://github.com/neocore-tech/simaju-plugin-template)
+- [Theme Template](https://github.com/neocore-tech/simaju-theme-template)
 
 ---
 <p align="center">Built with ❤️ by <b>Simaju Core Team</b></p>
