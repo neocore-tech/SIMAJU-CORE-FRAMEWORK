@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('../utils/logger');
 const DB = require('../database');
 const { DatabaseError } = require('../database/errors');
-const router = require('./router');
+const v1Api = require('../../api/v1');
 const webRouter = require('./web-router');
 const activityLog = require('../middlewares/activity-log.middleware');
 const tenantIdentify = require('../middlewares/tenant.middleware');
@@ -56,8 +56,11 @@ app.use('/api', activityLog);
 app.use('/api', apiKeyAuth);
 app.use('/api', tenantIdentify);
 
+const swaggerDoc = require('../../api/docs/swagger');
+
 // ── API Routes ────────────────────────────────────────────────
-app.use('/api', apiLimiter, router);
+app.use('/api/v1', apiLimiter, v1Api);
+app.use('/api/docs', swaggerDoc.serve, swaggerDoc.setup);
 
 // ── Plugins ───────────────────────────────────────────────────
 // Boot is now handled in index.js bootstrap

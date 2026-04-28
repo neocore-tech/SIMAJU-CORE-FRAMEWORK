@@ -4,15 +4,15 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
-const PluginManager = require('./plugin-manager');
+const PluginManager = require('../../../src/core/plugin-manager');
 
 /**
- * Global Router
+ * V1 Router Aggregator
  * ─────────────────────────────────────────────────────────────
- * Mendaftarkan semua module routes secara dinamis.
+ * Mendaftarkan semua module routes secara dinamis ke /api/v1/...
  */
 
-// Alias mapping for backward compatibility (e.g. pluralization)
+// Alias mapping for backward compatibility
 const routeAliases = {
   'user': '/users',
   'role': '/roles',
@@ -27,7 +27,7 @@ const routeAliases = {
   'plugin-manager': '/admin/plugins'
 };
 
-const modulesPath = path.join(__dirname, '../modules');
+const modulesPath = path.join(__dirname, '../../../src/modules');
 
 if (fs.existsSync(modulesPath)) {
   const modules = fs.readdirSync(modulesPath);
@@ -35,25 +35,23 @@ if (fs.existsSync(modulesPath)) {
   modules.forEach((moduleName) => {
     const moduleDir = path.join(modulesPath, moduleName);
     
-    // Ensure it's a directory
     if (fs.statSync(moduleDir).isDirectory()) {
       const routeFile = path.join(moduleDir, `${moduleName}.route.js`);
       
-      // If a specific route file exists, register it
       if (fs.existsSync(routeFile)) {
         try {
           const moduleRouter = require(routeFile);
           const routePrefix = routeAliases[moduleName] || `/${moduleName}`;
           router.use(routePrefix, moduleRouter);
         } catch (error) {
-          console.error(`❌ Failed to load route for module [${moduleName}]:`, error.message);
+          console.error(`❌ Failed to load V1 API route for module [${moduleName}]:`, error.message);
         }
       }
     }
   });
 }
 
-// ── Plugin Routes ─────────────────────────────────────────────
+// ── Plugin API Routes (mounted at /api/v1/plugins) ──────────
 PluginManager.boot(router, '/plugins');
 
 module.exports = router;
