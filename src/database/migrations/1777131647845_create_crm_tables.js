@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create CRM Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/crm/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul CRM tersedia.
  */
 module.exports = {
   up: async (db) => {

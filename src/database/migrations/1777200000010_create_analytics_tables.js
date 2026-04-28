@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create Analytics Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/analytics/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul Analytics tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

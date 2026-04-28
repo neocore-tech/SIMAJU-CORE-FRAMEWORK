@@ -51,6 +51,15 @@ app.use(cookieParser());
 // ── Web Routes ────────────────────────────────────────────────
 app.use('/', webRouter);
 
+// ── SEO Root Routes ───────────────────────────────────────────
+try {
+  const seoController = require('./seo/seo.controller');
+  app.get('/robots.txt', seoController.getRobotsTxt);
+  app.get('/sitemap.xml', seoController.getSitemapXml);
+} catch (err) {
+  // SEO module not installed yet
+}
+
 // ── API Middlewares ───────────────────────────────────────────
 app.use('/api', activityLog);
 app.use('/api', apiKeyAuth);

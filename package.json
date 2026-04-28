@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "mji": "./mji"
+  },
   "scripts": {
     "dev": "node index.js",
-    "start": "node index.js",
+    "start": "concurrently \"npm run dev\" \"npm run guard\"",
+    "guard": "cd guard && cargo run --release",
     "migrate": "node simaju db:migrate",
     "rollback": "node simaju db:rollback",
     "seed": "node simaju db:seed",
@@ -38,5 +42,8 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "systeminformation": "^5.31.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

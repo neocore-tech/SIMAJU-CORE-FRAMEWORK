@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create CMS Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/cms/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul CMS tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

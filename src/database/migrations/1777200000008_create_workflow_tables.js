@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create Workflow Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/workflow/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul Workflow tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create LMS Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/lms/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul LMS tersedia.
  */
 module.exports = {
   up: async (db) => {

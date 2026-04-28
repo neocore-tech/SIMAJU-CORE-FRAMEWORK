@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create Tenants Table
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/tenant/ belum dibuat.
+ * tenant.middleware.js sudah ada, tapi CRUD modul tenant belum tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

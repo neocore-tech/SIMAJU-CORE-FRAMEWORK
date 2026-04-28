@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create Custom Fields Tables
+ *
+ * STATUS: COMING SOON
+ * Fitur custom fields belum diintegrasikan ke modul manapun.
+ * Migrasi ini siap dijalankan saat fitur Custom Fields tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

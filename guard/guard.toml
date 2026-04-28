@@ -1,0 +1,84 @@
+# ─────────────────────────────────────────────────────────────
+# SIMAJU Guard — Configuration File
+# ─────────────────────────────────────────────────────────────
+
+[server]
+# Port publik yang diekspos ke internet
+port      = 8080
+tls_port  = 8443
+# Port untuk Admin REST API (jangan ekspos ke internet!)
+admin_port = 9000
+# Admin API Key — ganti dengan string acak yang kuat
+admin_key  = "GANTI_DENGAN_KEY_AMAN_DISINI"
+
+[upstream]
+# SIMAJU Node.js berjalan di sini (TIDAK boleh diakses dari luar)
+target          = "http://127.0.0.1:3000"
+timeout_ms      = 30000
+max_connections = 1000
+# Health check ke upstream
+health_path     = "/health"
+
+[rate_limit]
+enabled             = true
+requests_per_window = 100   # Max request per IP per window
+window_seconds      = 60
+burst               = 20    # Boleh burst singkat
+
+# Rate limit lebih ketat per route (override global)
+[rate_limit.routes]
+"/api/v1/auth/login"    = { max = 5,  window = 60  }
+"/api/v1/auth/register" = { max = 3,  window = 300 }
+
+[ip]
+# "blacklist" = semua boleh kecuali yang di list
+# "whitelist" = semua diblokir kecuali yang di list
+mode      = "blacklist"
+blacklist = []
+whitelist = []
+# Auto-block IP setelah sekian kali terdeteksi menyerang
+auto_block_after_attacks = 10
+# Durasi auto-block (menit)
+auto_block_minutes = 60
+
+[geoip]
+enabled           = false
+db_path           = "data/GeoLite2-Country.mmdb"
+blocked_countries = []  # Contoh: ["CN", "RU", "KP"]
+
+[payload]
+# Ukuran maksimum request body (KB)
+max_body_size_kb          = 1024
+detect_sqli               = true
+detect_xss                = true
+detect_traversal          = true
+detect_command_injection  = true
+
+[brute_force]
+enabled          = true
+max_failed       = 5       # Maks gagal login sebelum lockout
+lockout_minutes  = 15
+login_route      = "/api/v1/auth/login"
+
+[jwt]
+# Jika true, Guard akan pre-verify JWT sebelum diteruskan ke Node.js
+# Isi secret dengan nilai JWT_SECRET yang sama di .env SIMAJU
+pre_verify = false
+secret     = ""
+
+[tls]
+cert_file = "certs/cert.pem"
+key_file  = "certs/key.pem"
+# Auto redirect HTTP ke HTTPS
+http_redirect = true
+
+[logging]
+# trace | debug | info | warn | error
+level  = "info"
+# "json" untuk production, "pretty" untuk development
+format = "pretty"
+file   = "logs/guard.log"
+
+[metrics]
+enabled  = true
+endpoint = "/metrics"   # Prometheus scrape di admin port

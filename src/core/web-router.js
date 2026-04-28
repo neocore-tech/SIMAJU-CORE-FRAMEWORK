@@ -19,7 +19,7 @@ const fs      = require('fs');
 // Root paths (Laravel-style)
 const ROOT       = path.join(__dirname, '../..');
 const RES_VIEWS  = path.join(ROOT, 'resources/views');
-const WELCOME    = path.join(ROOT, 'welcome');
+const WELCOME    = path.join(ROOT, 'public/welcome');
 
 // Helper: kirim file HTML atau return 404
 function sendHTML(res, filePath, label = 'Page') {

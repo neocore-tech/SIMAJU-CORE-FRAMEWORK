@@ -1,71 +1,111 @@
-# <p align="center">Simaju Core Framework</p>
+# <p align="center">SIMAJU Core Framework</p>
 
 <p align="center">
-  <strong>Simaju Core Framework</strong><br>
+  <strong>SIMAJU Core Framework + SIMAJU Guard (Rust Firewall)</strong><br>
   <em>The Advanced Agentic Coding Framework for Modern Backend Applications</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
-  <img src="https://img.shields.io/badge/architecture-modular_sparse_checkout-success.svg" alt="Architecture">
+  <img src="https://img.shields.io/badge/version-2.1.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/architecture-modular-success.svg" alt="Architecture">
   <img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node Support">
+  <img src="https://img.shields.io/badge/rust-1.70+-orange.svg" alt="Rust Support">
 </p>
 
 ---
 
-## 🚀 Apa itu Simaju Core?
+## 🚀 Apa itu SIMAJU Core?
 
-**Simaju Core** telah berevolusi menjadi framework berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul-modul esensial (*Auth*, *User*, *Role*). 
+**SIMAJU Core** adalah framework Node.js berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial.
 
-Seluruh modul bisnis ekstensi (CRM, Inventory, CMS, dll) dikelola di sebuah **Monorepo Cloud** yang bisa di-*download* secara selektif menggunakan teknologi **Git Sparse-Checkout** layaknya menggunakan `npm` atau `composer`.
+Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasis **Rust** super cepat yang melindungi aplikasi dari serangan *DDoS*, *SQL Injection*, *XSS*, dan serangan *Brute Force*, memastikan performa dan keamanan tingkat tinggi.
 
-## ✨ Fitur Unggulan V2
+---
 
-*   📦 **Sparse-Checkout Modular System**: Pasang hanya modul bisnis yang Anda butuhkan langsung dari Cloud Monorepo tanpa membebani sistem Anda.
-*   🔌 **Dynamic Discovery**: Router dan Plugin Manager sekarang 100% dinamis. Cukup masukkan folder modul ke `src/modules/` dan framework akan mendeteksinya otomatis tanpa registrasi manual.
-*   🛠️ **Powerful Bulk Installer**: Atur infrastruktur Anda di `simaju.json` dan instal seluruh ekosistem dengan satu baris perintah.
-*   💾 **Multi-DB Support**: Mendukung SQLite, MySQL, dan PostgreSQL dengan migrasi terpadu.
-*   🎨 **Premium UI Dashboard**: Dilengkapi sistem Tema (Theme Engine) berbasis EJS yang sepenuhnya bisa dikustomisasi (*overrideable*).
+## ✨ Fitur Unggulan
+
+*   🛡️ **SIMAJU Guard (Rust Firewall)**: Dilengkapi dengan proteksi Layer 7 bawaan (Rate Limiter, IP Blacklist, Payload Analyzer).
+*   📦 **Sparse-Checkout Modular System**: Pasang hanya modul bisnis yang Anda butuhkan (CRM, Inventory, dll) langsung dari Cloud Monorepo.
+*   🔌 **Dynamic Discovery**: Router dan Plugin Manager 100% dinamis. Cukup masukkan folder modul dan framework akan mendeteksinya otomatis.
+*   🛠️ **CLI Interaktif yang Sangat Mudah**: Menggunakan perintah `./mji` yang dirancang agar nyaman digunakan oleh pemula sekalipun.
+*   💾 **Multi-DB Support**: Mendukung SQLite, MySQL, dan PostgreSQL dengan ORM & Query Builder bawaan.
+
+---
 
 ## 🛠️ Instalasi Cepat
 
-### 1. Kloning Core Framework
+### 1. Kloning Repository
 ```bash
 git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
 cd SIMAJU-CORE-FRAMEWORK
 ```
 
-### 2. Konfigurasi Instalasi Modul (`simaju.json`)
-Atur modul bisnis apa saja yang ingin Anda pasang di file `simaju.json`:
-```json
-{
-  "registry": {
-    "modules": "https://github.com/neocore-tech/simaju-modules-collection.git"
-  },
-  "modules": [
-    "crm",
-    "inventory"
-  ]
-}
-```
-
-### 3. Eksekusi Instalasi Otomatis
+### 2. Install Dependencies
+Cukup gunakan satu perintah ini untuk menginstal semua kebutuhan Node.js:
 ```bash
-./simaju install:all
+./mji install
 ```
-*Sistem akan otomatis mengekstrak spesifik folder `crm` dan `inventory` secara gaib dari repository utama.*
 
-### 4. Mulai Server
+### 3. Setup Database & Data Awal
+Jalankan migrasi untuk membuat tabel-tabel di database, dan masukkan data awal (seeder):
 ```bash
-./simaju db:migrate
-npm run dev
+./mji migrate
+./mji seed
 ```
-
-## 📚 Boilerplate Templates
-Kami juga menyediakan template dasar jika Anda ingin membuat ekstensi sendiri:
-- [Module Template](https://github.com/neocore-tech/simaju-module-template)
-- [Plugin Template](https://github.com/neocore-tech/simaju-plugin-template)
-- [Theme Template](https://github.com/neocore-tech/simaju-theme-template)
 
 ---
-<p align="center">Built with ❤️ by <b>Simaju Core Team</b></p>
+
+## 💻 Cara Menjalankan (Sangat Mudah!)
+
+Lupakan perintah `npm` yang panjang dan rumit. Kami menyediakan antarmuka `./mji` yang sangat ramah pengguna. 
+
+Terdapat 3 cara utama menjalankan sistem ini:
+
+### Cara 1: Menjalankan Semuanya (Sangat Direkomendasikan) 🚀
+```bash
+./mji up
+```
+*Perintah ini akan menjalankan **Framework (Node.js)** di port 3000 dan **Firewall (Rust)** di port 8080 secara bersamaan. Aplikasi Anda otomatis terlindungi sepenuhnya.*
+
+### Cara 2: Menjalankan Framework Saja (Development) 💻
+```bash
+./mji dev
+```
+*Hanya menjalankan core Node.js. Cocok saat Anda sedang asyik menulis kode modul.*
+
+### Cara 3: Menjalankan Firewall Saja 🛡️
+```bash
+./mji guard
+```
+*Hanya menjalankan SIMAJU Guard (Rust). Biasa digunakan jika Anda mendeploy Framework dan Firewall di server yang berbeda (Microservices).*
+
+---
+
+## ⚙️ Perintah Utility Lainnya
+
+Anda bisa melihat semua bantuan perintah dengan mengetik:
+```bash
+./mji help
+```
+
+Beberapa perintah yang sering digunakan:
+- `./mji monit` — Membuka Terminal Dashboard interaktif (melihat CPU, RAM, Network).
+- `./mji test` — Menjalankan unit testing dan validasi API.
+- `./mji rollback` — Membatalkan (undo) perubahan database terakhir.
+
+---
+
+## 📁 Struktur Folder Utama
+
+```text
+SIMAJU-CORE-FRAMEWORK/
+├── src/          # Source Code utama (Node.js)
+├── guard/        # SIMAJU Guard Firewall (Rust)
+├── public/       # File statis (Gambar, CSS, Welcome Page)
+├── api/          # Entry point untuk API eksternal
+├── tests/        # Script testing otomatis
+└── mji           # Alat ajaib untuk menjalankan segalanya
+```
+
+---
+<p align="center">Built with ❤️ by <b>SIMAJU Core Team</b></p>

@@ -21,15 +21,18 @@ if (!command || command === 'help') {
   console.log(`
   \x1b[1mUsage:\x1b[0m  mji <command> [options]
 
-  \x1b[33mDev Commands:\x1b[0m
-    run dev              Start development server
-    run start            Start production server
-    monit                Open Terminal Dashboard (CPU, RAM, Net)
-    run migrate          Run database migrations
-    run rollback         Rollback last migration
-    run seed             Seed the database
-    run test             Run test suite
-    install              Install dependencies (via npm)
+  \x1b[33m🚀 Main Commands (Sangat Mudah):\x1b[0m
+    up                   Jalankan Framework + Firewall bersamaan (Rekomendasi!)
+    dev                  Jalankan Framework saja (Mode Development)
+    guard                Jalankan Firewall saja (SIMAJU Guard - Rust)
+    monit                Buka Dashboard Terminal (CPU, RAM, Network)
+
+  \x1b[33m🛠️  Utility Commands:\x1b[0m
+    migrate              Jalankan semua database migration
+    rollback             Kembalikan (rollback) migration terakhir
+    seed                 Isi database dengan data awal
+    test                 Jalankan testing (Unit & API)
+    install              Install dependency packages (via npm)
 
   \x1b[33mScaffolding:\x1b[0m
     make:module <name>   Create a new module
@@ -52,55 +55,51 @@ if (!command || command === 'help') {
   process.exit(0);
 }
 
-// ── run <script> — pengganti npm run ──────────────────────────
-if (command === 'run') {
-  const script = args[1];
-  const simajuPath = path.join(__dirname, 'simaju');
+// ── Core Commands (Sederhana tanpa 'run') ───────────────────────
+const simajuPath = path.join(__dirname, 'simaju');
 
-  const scripts = {
-    dev() {
-      console.log('\x1b[32m🚀 Starting Simaju Development Server...\x1b[0m');
-      spawn('node', [path.join(__dirname, 'index.js')], {
-        stdio: 'inherit',
-        cwd: __dirname,
-        env: { ...process.env, NODE_ENV: 'development' },
-      });
-    },
-    start() {
-      console.log('\x1b[32m🚀 Starting Simaju Production Server...\x1b[0m');
-      spawn('node', [path.join(__dirname, 'index.js')], {
-        stdio: 'inherit',
-        cwd: __dirname,
-        env: { ...process.env, NODE_ENV: 'production' },
-      });
-    },
-    migrate() {
-      spawn('node', [simajuPath, 'db:migrate', ...args.slice(2)], { stdio: 'inherit' });
-    },
-    rollback() {
-      spawn('node', [simajuPath, 'db:rollback', ...args.slice(2)], { stdio: 'inherit' });
-    },
-    seed() {
-      spawn('node', [simajuPath, 'db:seed', ...args.slice(2)], { stdio: 'inherit' });
-    },
-    test() {
-      console.log('\x1b[32m🧪 Running test suite...\x1b[0m');
-      spawn('node', ['--test', 'tests/**/*.test.js'], { stdio: 'inherit' });
-    },
-    build() {
-      console.log('\x1b[32m🏗️  Building Simaju Application...\x1b[0m');
-      console.log('📦 Optimizing assets...');
-      console.log('✨ Build successful!');
-    },
-  };
+const scripts = {
+  up() {
+    console.log('\x1b[32m🚀 Starting SIMAJU Framework + Firewall...\x1b[0m');
+    const child = spawn('npm', ['run', 'start'], { stdio: 'inherit', cwd: __dirname });
+    child.on('exit', code => process.exit(code));
+  },
+  dev() {
+    console.log('\x1b[32m🚀 Starting SIMAJU Core (Framework Only)...\x1b[0m');
+    spawn('node', [path.join(__dirname, 'index.js')], {
+      stdio: 'inherit',
+      cwd: __dirname,
+      env: { ...process.env, NODE_ENV: 'development' },
+    });
+  },
+  guard() {
+    console.log('\x1b[32m🛡️  Starting SIMAJU Guard (Firewall Only)...\x1b[0m');
+    const child = spawn('npm', ['run', 'guard'], { stdio: 'inherit', cwd: __dirname });
+    child.on('exit', code => process.exit(code));
+  },
+  migrate() {
+    spawn('node', [simajuPath, 'db:migrate', ...args.slice(1)], { stdio: 'inherit' });
+  },
+  rollback() {
+    spawn('node', [simajuPath, 'db:rollback', ...args.slice(1)], { stdio: 'inherit' });
+  },
+  seed() {
+    spawn('node', [simajuPath, 'db:seed', ...args.slice(1)], { stdio: 'inherit' });
+  },
+  test() {
+    console.log('\x1b[32m🧪 Running test suite...\x1b[0m');
+    spawn('node', ['--test', 'tests/**/*.test.js'], { stdio: 'inherit', cwd: __dirname });
+  },
+};
 
-  if (scripts[script]) {
-    scripts[script]();
-  } else {
-    console.error(`\x1b[31m❌ Unknown script: "${script}"\x1b[0m`);
-    console.log('   Run \x1b[33mmji help\x1b[0m to see available commands.');
-    process.exit(1);
-  }
+if (scripts[command]) {
+  scripts[command]();
+} else if (command === 'run' && scripts[args[1]]) {
+  // Dukung format lama: mji run dev -> mji dev
+  scripts[args[1]]();
+} else if (command === 'run') {
+  console.error(`\x1b[31m❌ Unknown script: "${args[1]}"\x1b[0m`);
+  process.exit(1);
 
 // ── install — pengganti npm install ───────────────────────────
 } else if (command === 'install' || command === 'i') {

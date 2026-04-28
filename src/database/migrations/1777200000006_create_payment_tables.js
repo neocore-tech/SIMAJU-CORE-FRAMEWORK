@@ -2,6 +2,10 @@
 
 /**
  * Migration: Create Payment Tables
+ *
+ * STATUS: COMING SOON
+ * Modul src/modules/payment/ belum dibuat.
+ * Migrasi ini siap dijalankan saat modul Payment tersedia.
  */
 exports.up = async (db) => {
   await db.raw(`

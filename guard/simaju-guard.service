@@ -1,0 +1,26 @@
+[Unit]
+Description=SIMAJU Guard - Rust Reverse Proxy Firewall
+After=network.target
+
+[Service]
+Type=simple
+User=root
+# Ganti dengan lokasi folder dimana binary berada
+WorkingDirectory=/opt/simaju-guard
+ExecStart=/opt/simaju-guard/simaju-guard
+
+# Otomatis restart jika crash
+Restart=always
+RestartSec=5
+
+# Security Hardening (Sistem Keamanan OS)
+ProtectSystem=full
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

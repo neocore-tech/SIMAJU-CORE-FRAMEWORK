@@ -54,4 +54,12 @@ if (fs.existsSync(modulesPath)) {
 // ── Plugin API Routes (mounted at /api/v1/plugins) ──────────
 PluginManager.boot(router, '/plugins');
 
+// ── Core API Routes ───────────────────────────────────────────
+try {
+  const seoRouter = require('../../../src/core/seo/seo.route');
+  router.use('/seo', seoRouter);
+} catch (err) {
+  // Ignore if seo route doesn't exist
+}
+
 module.exports = router;
