@@ -34,24 +34,23 @@ Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasi
 
 ## 🛠️ Instalasi Cepat
 
-### 1. Kloning Repository
+### 1. Buat Proyek Baru
+Cukup gunakan satu perintah sakti ini di terminal Anda. Sistem akan secara otomatis mengunduh framework, membersihkan riwayat git lama, dan membuatkan kunci keamanan rahasia (*secret key*) yang unik untuk Anda:
+
 ```bash
-git clone https://github.com/neocore-tech/SIMAJU-CORE-FRAMEWORK.git
-cd SIMAJU-CORE-FRAMEWORK
+npx create-simaju-app my-app
 ```
 
-### 2. Install Dependencies
-Cukup gunakan satu perintah ini untuk menginstal semua kebutuhan Node.js:
+### 2. Masuk ke Direktori & Jalankan
+Setelah instalasi selesai, masuk ke dalam folder proyek Anda:
+
 ```bash
-./mji install
+cd my-app
 ```
 
-### 3. Setup Database & Data Awal
-Jalankan migrasi untuk membuat tabel-tabel di database, dan masukkan data awal (seeder):
-```bash
-./mji migrate
-./mji seed
-```
+Jika Anda memilih database **SQLite** saat proses instalasi, migrasi dan *seeder* sudah dijalankan otomatis. Anda siap untuk langsung lanjut ke tahap selanjutnya!
+
+*(Catatan: Jika Anda memilih MySQL/PostgreSQL, pastikan untuk mengisi kredensial database di file `.env` terlebih dahulu, lalu jalankan `./mji migrate`)*
 
 ---
 
