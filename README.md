@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>SIMAJU Core Framework + SIMAJU Guard (Rust Firewall)</strong><br>
-  <em>The Advanced Agentic Coding Framework for Modern Backend Applications</em>
+  <em>The Modern Modular Backend Framework for Node.js — Built for SaaS, Enterprise & Developers</em>
 </p>
 
 <p align="center">
@@ -10,13 +10,14 @@
   <img src="https://img.shields.io/badge/architecture-modular-success.svg" alt="Architecture">
   <img src="https://img.shields.io/badge/node-%3E%3D18-green.svg" alt="Node Support">
   <img src="https://img.shields.io/badge/rust-1.70+-orange.svg" alt="Rust Support">
+  <img src="https://img.shields.io/badge/install-npx create--simaju--app-blueviolet.svg" alt="Install">
 </p>
 
 ---
 
 ## 🚀 Apa itu SIMAJU Core?
 
-**SIMAJU Core** adalah framework Node.js berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial.
+**SIMAJU Core** adalah framework Node.js berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial — semua fitur bisnis dipasang terpisah melalui sistem modul dan plugin.
 
 Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasis **Rust** super cepat yang melindungi aplikasi dari serangan *DDoS*, *SQL Injection*, *XSS*, dan serangan *Brute Force*, memastikan performa dan keamanan tingkat tinggi.
 
@@ -24,87 +25,144 @@ Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasi
 
 ## ✨ Fitur Unggulan
 
-*   🛡️ **SIMAJU Guard (Rust Firewall)**: Dilengkapi dengan proteksi Layer 7 bawaan (Rate Limiter, IP Blacklist, Payload Analyzer).
-*   📦 **Sparse-Checkout Modular System**: Pasang hanya modul bisnis yang Anda butuhkan (CRM, Inventory, dll) langsung dari Cloud Monorepo.
-*   🔌 **Dynamic Discovery**: Router dan Plugin Manager 100% dinamis. Cukup masukkan folder modul dan framework akan mendeteksinya otomatis.
-*   🛠️ **CLI Interaktif yang Sangat Mudah**: Menggunakan perintah `./mji` yang dirancang agar nyaman digunakan oleh pemula sekalipun.
-*   💾 **Multi-DB Support**: Mendukung SQLite, MySQL, dan PostgreSQL dengan ORM & Query Builder bawaan.
+| Fitur | Deskripsi |
+|---|---|
+| 🛡️ **SIMAJU Guard** | Rust Firewall bawaan: Rate Limiter, IP Blacklist, WAF, Brute Force Protection |
+| 📦 **Modular System** | Pasang hanya modul bisnis yang dibutuhkan — tidak ada bloat |
+| 🔌 **Dynamic Discovery** | Router & Plugin Manager 100% otomatis terdeteksi |
+| 🛠️ **CLI `mji`** | Perintah artisan-like yang sangat mudah digunakan |
+| 💾 **Multi-DB Support** | SQLite, MySQL, PostgreSQL, MongoDB — Database Agnostic |
+| 🔐 **Auto Secret Keygen** | Kunci JWT & Admin Key di-generate unik per proyek secara otomatis |
+| 🌐 **SEO Engine** | Meta dinamis, Sitemap, Schema JSON-LD, dan Redirect 301 bawaan |
 
 ---
 
-## 🛠️ Instalasi Cepat
+## ⚡ Instalasi Otomatis (Direkomendasikan)
 
-### 1. Buat Proyek Baru
-Cukup gunakan satu perintah sakti ini di terminal Anda. Sistem akan secara otomatis mengunduh framework, membersihkan riwayat git lama, dan membuatkan kunci keamanan rahasia (*secret key*) yang unik untuk Anda:
+> **Prasyarat:** Pastikan Anda sudah menginstal [Node.js](https://nodejs.org/) versi 18 atau lebih baru dan [Git](https://git-scm.com/).
+
+Cukup satu perintah untuk memulai. Proses berikut akan berjalan **sepenuhnya otomatis**:
 
 ```bash
-npx create-simaju-app my-app
+npx create-simaju-app nama-proyek-anda
 ```
 
-### 2. Masuk ke Direktori & Jalankan
-Setelah instalasi selesai, masuk ke dalam folder proyek Anda:
+### Yang terjadi secara otomatis di balik layar:
+1. ✅ Framework ter-*clone* dari GitHub ke folder proyek Anda
+2. ✅ Riwayat git lama dibersihkan & repositori git baru dibuat khusus untuk proyek Anda
+3. ✅ Anda ditanya jenis database yang ingin digunakan (SQLite / MySQL / PostgreSQL)
+4. ✅ File `.env` dibuat dari template dengan **JWT Secret & Admin Key yang benar-benar acak & unik**
+5. ✅ Semua dependency NPM langsung terinstall
+
+### Lanjutkan setelah instalasi:
 
 ```bash
-cd my-app
-```
+# Masuk ke folder proyek
+cd nama-proyek-anda
 
-Jika Anda memilih database **SQLite** saat proses instalasi, migrasi dan *seeder* sudah dijalankan otomatis. Anda siap untuk langsung lanjut ke tahap selanjutnya!
-
-*(Catatan: Jika Anda memilih MySQL/PostgreSQL, pastikan untuk mengisi kredensial database di file `.env` terlebih dahulu, lalu jalankan `./mji migrate`)*
-
----
-
-## 💻 Cara Menjalankan (Sangat Mudah!)
-
-Lupakan perintah `npm` yang panjang dan rumit. Kami menyediakan antarmuka `./mji` yang sangat ramah pengguna. 
-
-Terdapat 3 cara utama menjalankan sistem ini:
-
-### Cara 1: Menjalankan Semuanya (Sangat Direkomendasikan) 🚀
-```bash
+# Jalankan framework + firewall sekaligus
 ./mji up
 ```
-*Perintah ini akan menjalankan **Framework (Node.js)** di port 3000 dan **Firewall (Rust)** di port 8080 secara bersamaan. Aplikasi Anda otomatis terlindungi sepenuhnya.*
 
-### Cara 2: Menjalankan Framework Saja (Development) 💻
-```bash
-./mji dev
-```
-*Hanya menjalankan core Node.js. Cocok saat Anda sedang asyik menulis kode modul.*
-
-### Cara 3: Menjalankan Firewall Saja 🛡️
-```bash
-./mji guard
-```
-*Hanya menjalankan SIMAJU Guard (Rust). Biasa digunakan jika Anda mendeploy Framework dan Firewall di server yang berbeda (Microservices).*
+> 💡 Jika menggunakan **SQLite**, semua siap langsung! Jika menggunakan **MySQL/PostgreSQL**, isi kredensial di file `.env` terlebih dahulu, lalu jalankan `./mji migrate`.
 
 ---
 
-## ⚙️ Perintah Utility Lainnya
+## 💻 Cara Menjalankan
 
-Anda bisa melihat semua bantuan perintah dengan mengetik:
+SIMAJU Core menyediakan perintah `mji` sebagai pusat kontrol seluruh operasi — mirip seperti `artisan` di Laravel.
+
+### Mode Utama
+
 ```bash
-./mji help
+# 🚀 PALING DIREKOMENDASIKAN: Jalankan Framework + Firewall bersamaan
+./mji up
+
+# 💻 Mode Development (Framework Node.js saja)
+./mji dev
+
+# 🛡️ Firewall saja (untuk arsitektur microservices)
+./mji guard
 ```
 
-Beberapa perintah yang sering digunakan:
-- `./mji monit` — Membuka Terminal Dashboard interaktif (melihat CPU, RAM, Network).
-- `./mji test` — Menjalankan unit testing dan validasi API.
-- `./mji rollback` — Membatalkan (undo) perubahan database terakhir.
+### Database
+
+```bash
+./mji migrate      # Jalankan semua migration
+./mji seed         # Isi data awal (seeder)
+./mji rollback     # Batalkan migration terakhir
+```
+
+### Scaffolding (Generate Kode Otomatis)
+
+```bash
+./mji make:module inventaris       # Buat modul baru
+./mji make:migration create_users  # Buat file migration baru
+```
+
+### Monitoring & Testing
+
+```bash
+./mji monit   # Buka Terminal Dashboard (CPU, RAM, Network)
+./mji test    # Jalankan unit testing & API testing
+./mji help    # Tampilkan semua perintah yang tersedia
+```
 
 ---
 
 ## 📁 Struktur Folder Utama
 
 ```text
-SIMAJU-CORE-FRAMEWORK/
-├── src/          # Source Code utama (Node.js)
-├── guard/        # SIMAJU Guard Firewall (Rust)
-├── public/       # File statis (Gambar, CSS, Welcome Page)
-├── api/          # Entry point untuk API eksternal
-├── tests/        # Script testing otomatis
-└── mji           # Alat ajaib untuk menjalankan segalanya
+nama-proyek-anda/
+├── src/
+│   ├── core/        # Engine inti framework (Router, Auth, DB, dll)
+│   ├── modules/     # Modul bisnis Anda (Inventaris, CRM, dll)
+│   ├── plugins/     # Plugin tambahan (Email, Payment Gateway, dll)
+│   └── seo/         # SEO Engine (Meta, Sitemap, Schema)
+├── guard/           # SIMAJU Guard Firewall (Rust)
+│   └── guard.toml   # Konfigurasi firewall & WAF
+├── resources/
+│   └── views/       # Template Tema & Views (EJS)
+├── public/          # Aset statis (CSS, JS, Gambar)
+├── tests/           # Script unit & API testing
+├── .env             # Konfigurasi environment (auto-generated)
+├── simaju.json      # Daftar modul, plugin, dan tema aktif
+└── mji              # CLI utama SIMAJU
 ```
 
 ---
+
+## 🛡️ SIMAJU Guard — Firewall Berbasis Rust
+
+Framework ini dilindungi oleh **SIMAJU Guard**, sebuah *reverse proxy* berperforma tinggi yang dibangun menggunakan Rust.
+
+| Perlindungan | Detail |
+|---|---|
+| **WAF** | Mendeteksi & memblokir SQLi, XSS, Path Traversal, Command Injection |
+| **Rate Limiter** | Token Bucket per IP, bisa dikonfigurasi per-rute |
+| **Brute Force Lock** | Blokir otomatis setelah sejumlah percobaan login gagal |
+| **IP Blacklist** | Auto-block IP penyerang secara dinamis |
+| **Security Headers** | HSTS, X-Frame-Options, CSP, dll — injeksi otomatis |
+| **TLS/HTTPS** | Dukungan sertifikat SSL/TLS nativ via `rustls` |
+| **Admin API** | Kontrol firewall dari jarak jauh via REST API (port 9000) |
+
+Konfigurasi lengkap firewall terdapat di file `guard/guard.toml`.
+
+---
+
+## 📚 Dokumentasi
+
+Dokumentasi teknis lengkap tersedia di folder `Dokumentasi/`:
+
+| File | Isi |
+|---|---|
+| `guide_module_development.md` | Cara membuat Modul bisnis baru (MVC) |
+| `guide_plugin_development.md` | Cara membuat Plugin & hooking Event Bus |
+| `guide_theme_development.md` | Cara membuat & mengaktifkan Tema (SSR) |
+| `seo.md` | Panduan lengkap SEO Engine (8 Phase) |
+| `firewall_guard.md` | Dokumentasi SIMAJU Guard |
+| `architecture.md` | Arsitektur folder & alur kerja core |
+
+---
+
 <p align="center">Built with ❤️ by <b>SIMAJU Core Team</b></p>
