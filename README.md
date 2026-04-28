@@ -70,7 +70,7 @@ cd nama-proyek-anda
 
 ## 💻 Cara Menjalankan
 
-SIMAJU Core menyediakan perintah `mji` sebagai pusat kontrol seluruh operasi — mirip seperti `artisan` di Laravel.
+SIMAJU Core menyediakan perintah `mji` sebagai pusat kontrol seluruh operasi framework Anda.
 
 ### Mode Utama
 
