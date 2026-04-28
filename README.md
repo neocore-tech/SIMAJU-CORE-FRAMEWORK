@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>SIMAJU Core Framework + SIMAJU Guard (Rust Firewall)</strong><br>
-  <em>The Modern Modular Backend Framework for Node.js — Built for SaaS, Enterprise & Developers</em>
+  <em>The Modern Modular Backend Framework — Built for SaaS, Enterprise & Developers</em>
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 ## 🚀 Apa itu SIMAJU Core?
 
-**SIMAJU Core** adalah framework Node.js berstandar korporasi dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial — semua fitur bisnis dipasang terpisah melalui sistem modul dan plugin.
+**SIMAJU Core** adalah framework backend modern dengan arsitektur **Ultra-Lightweight Modular**. Framework utama sengaja dibuat sangat ringan dan hanya berisi modul esensial — semua fitur bisnis dipasang terpisah melalui sistem modul dan plugin.
 
 Kini dilengkapi dengan **SIMAJU Guard**, sebuah Reverse Proxy & Firewall berbasis **Rust** super cepat yang melindungi aplikasi dari serangan *DDoS*, *SQL Injection*, *XSS*, dan serangan *Brute Force*, memastikan performa dan keamanan tingkat tinggi.
 
