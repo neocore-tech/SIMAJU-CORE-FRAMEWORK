@@ -171,11 +171,13 @@ SIMAJU Core dirancang untuk diperluas. Temukan koleksi resmi modul, plugin, dan 
 
 | Repositori | Isi | Link |
 |---|---|---|
-| **simaju-modules** | Koleksi modul bisnis resmi (CRM, LMS, Inventaris, HRIS, dll) | [→ github.com/neocore-tech/simaju-modules](https://github.com/neocore-tech/simaju-modules) |
-| **simaju-plugins** | Plugin integrasi pihak ketiga (Email, Payment, Analytics, dll) | [→ github.com/neocore-tech/simaju-plugins](https://github.com/neocore-tech/simaju-plugins) |
-| **simaju-themes** | Koleksi tema tampilan & template UI siap pakai | [→ github.com/neocore-tech/simaju-themes](https://github.com/neocore-tech/simaju-themes) |
+| **koleksi-modul-simaju** | Koleksi modul bisnis resmi (CRM, LMS, Inventaris, HRIS, dll) | [→ neocore-tech/koleksi-modul-simaju](https://github.com/neocore-tech/koleksi-modul-simaju) |
+| **simaju-modul-templat** | Template scaffold resmi untuk membuat modul baru | [→ neocore-tech/simaju-modul-templat](https://github.com/neocore-tech/simaju-modul-templat) |
+| **plugin-simaju** | Plugin integrasi pihak ketiga (Email, Payment, Analytics, dll) | [→ neocore-tech/plugin-simaju](https://github.com/neocore-tech/plugin-simaju) |
+| **template-plugin-simaju** | Template scaffold resmi untuk membuat plugin baru | [→ neocore-tech/template-plugin-simaju](https://github.com/neocore-tech/template-plugin-simaju) |
+| **template-tema-simaju** | Koleksi tema tampilan & template UI siap pakai (EJS) | [→ neocore-tech/template-tema-simaju](https://github.com/neocore-tech/template-tema-simaju) |
 
-> 💡 Untuk memasang modul/plugin/tema dari repositori di atas, cukup daftarkan namanya di file `simaju.json` lalu jalankan `./mji install:all`.
+> 💡 Untuk memasang modul/plugin/tema, cukup daftarkan namanya di file `simaju.json` lalu jalankan `./mji install:all`.
 
 ---
 
