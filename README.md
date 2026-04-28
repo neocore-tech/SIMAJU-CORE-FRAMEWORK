@@ -165,4 +165,33 @@ Dokumentasi teknis lengkap tersedia di folder `Dokumentasi/`:
 
 ---
 
+## 🌐 Ekosistem SIMAJU
+
+SIMAJU Core dirancang untuk diperluas. Temukan koleksi resmi modul, plugin, dan tema siap pakai di repositori berikut:
+
+| Repositori | Isi | Link |
+|---|---|---|
+| **simaju-modules** | Koleksi modul bisnis resmi (CRM, LMS, Inventaris, HRIS, dll) | [→ github.com/neocore-tech/simaju-modules](https://github.com/neocore-tech/simaju-modules) |
+| **simaju-plugins** | Plugin integrasi pihak ketiga (Email, Payment, Analytics, dll) | [→ github.com/neocore-tech/simaju-plugins](https://github.com/neocore-tech/simaju-plugins) |
+| **simaju-themes** | Koleksi tema tampilan & template UI siap pakai | [→ github.com/neocore-tech/simaju-themes](https://github.com/neocore-tech/simaju-themes) |
+
+> 💡 Untuk memasang modul/plugin/tema dari repositori di atas, cukup daftarkan namanya di file `simaju.json` lalu jalankan `./mji install:all`.
+
+---
+
+## 📚 Dokumentasi
+
+Dokumentasi teknis lengkap tersedia di folder `Dokumentasi/`:
+
+| File | Isi |
+|---|---|
+| `guide_module_development.md` | Cara membuat Modul bisnis baru (MVC) |
+| `guide_plugin_development.md` | Cara membuat Plugin & hooking Event Bus |
+| `guide_theme_development.md` | Cara membuat & mengaktifkan Tema (SSR) |
+| `seo.md` | Panduan lengkap SEO Engine (8 Phase) |
+| `firewall_guard.md` | Dokumentasi SIMAJU Guard |
+| `architecture.md` | Arsitektur folder & alur kerja core |
+
+---
+
 <p align="center">Built with ❤️ by <b>SIMAJU Core Team</b></p>
