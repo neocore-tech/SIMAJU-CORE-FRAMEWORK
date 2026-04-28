@@ -1,0 +1,16 @@
+{
+  "registry": {
+    "modules": "https://github.com/neocore-tech/simaju-modules-collection.git"
+  },
+  "modules": [
+    "crm",
+    "inventory",
+    "cms"
+  ],
+  "plugins": {
+    "payment-gateway": "https://github.com/simaju/plugin-payment.git"
+  },
+  "themes": {
+    "modern-dashboard": "https://github.com/simaju/theme-modern.git"
+  }
+}

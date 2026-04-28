@@ -29,10 +29,14 @@ if (!command) {
     db:migrate [conn]      Run pending migrations
     db:rollback [conn]     Rollback last migration batch
     db:ping [conn]         Check database connection
+    install:all            Install all modules, plugins, and themes from simaju.json
     module:install <url>   Install a module from Git
     plugin:install <url>   Install a plugin from Git
     plugin:list            List all installed plugins
     plugin:migrate <name>  Run migrations for a specific plugin
+    theme:list             List all installed themes
+    theme:install <url>    Install a theme from Git
+    theme:activate <name>  Activate a specific theme
     init                   Run interactive setup wizard
     help                   Show this help
   `);
@@ -40,6 +44,55 @@ if (!command) {
 }
 
 const commands = {
+  'theme:list': () => {
+    const ThemeManager = require('./src/core/theme-manager');
+    const themes = ThemeManager.getInstalledThemes();
+    const active = ThemeManager.getActiveTheme();
+    
+    if (themes.length === 0) {
+      console.log('No themes installed.');
+      return;
+    }
+
+    console.log('\n\x1b[1m\x1b[36mInstalled Themes:\x1b[0m');
+    themes.forEach(t => {
+      const isActive = t.id === active;
+      console.log(`${isActive ? '\x1b[32m●\x1b[0m' : '○'} ${t.name} (v${t.version || '1.0.0'})${isActive ? ' \x1b[32m[Active]\x1b[0m' : ''}`);
+    });
+    console.log('');
+  },
+
+  'theme:install': (url) => {
+    if (!url) return console.error('Error: Theme Git URL is required');
+    const { spawnSync } = require('child_process');
+    const themeName = path.basename(url, '.git');
+    const targetPath = path.join(__dirname, 'src', 'themes', themeName);
+
+    if (fs.existsSync(targetPath)) {
+      return console.error(`Error: Theme [${themeName}] already exists`);
+    }
+
+    console.log(`🚀 Installing theme [${themeName}]...`);
+    const result = spawnSync('git', ['clone', url, targetPath], { stdio: 'inherit' });
+
+    if (result.status === 0) {
+      console.log(`✅ Theme [${themeName}] installed successfully.`);
+    } else {
+      console.error(`❌ Failed to install theme [${themeName}].`);
+    }
+  },
+
+  'theme:activate': (name) => {
+    if (!name) return console.error('Error: Theme name is required');
+    const ThemeManager = require('./src/core/theme-manager');
+    try {
+      ThemeManager.activate(name);
+      console.log(`\x1b[32m✅ Theme [${name}] activated successfully.\x1b[0m`);
+      console.log(`👉 Restart server to apply changes.`);
+    } catch (err) {
+      console.error(`❌ Activation failed: ${err.message}`);
+    }
+  },
   'make:module': (name) => {
     if (!name) return console.error('Error: Module name is required');
     const modulePath = path.join(__dirname, 'src', 'modules', name);
@@ -162,6 +215,20 @@ module.exports = {
     }
   },
 
+  'db:seed': async (name) => {
+    const DB = require('./src/database');
+    const config = require('./src/config/database');
+    const SeederManager = require('./src/database/seeder-manager');
+
+    try {
+      await DB.boot(config);
+      await SeederManager.run(name || null);
+    } catch (err) {
+      console.error('❌ Seeder failed:', err.message);
+      process.exit(1);
+    }
+  },
+
   'db:rollback': async (conn) => {
     const DB = require('./src/database');
     const config = require('./src/config/database');
@@ -253,32 +320,121 @@ module.exports = {
       process.exit(1);
     }
   },
-  'module:install': (url, name) => {
-    if (!url) return console.error('Error: Module Git URL is required');
+  'module:install': (nameOrUrl, explicitName) => {
+    if (!nameOrUrl) return console.error('Error: Module name or URL is required');
     const { spawnSync } = require('child_process');
-    const moduleName = name || path.basename(url, '.git');
+    const os = require('os');
+    
+    let url = nameOrUrl;
+    let moduleName = explicitName || path.basename(url, '.git');
+    let isSparse = false;
+    
+    // Jika input hanya nama modul (tanpa / atau ://), ambil URL dari registry
+    if (!nameOrUrl.includes('/') && !nameOrUrl.includes('\\\\')) {
+       const configPath = path.join(__dirname, 'simaju.json');
+       if (fs.existsSync(configPath)) {
+         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+         url = config.registry && config.registry.modules;
+       }
+       if (!url) return console.error(`❌ Error: Cannot install [${nameOrUrl}], no modules registry found in simaju.json`);
+       moduleName = nameOrUrl;
+       isSparse = true;
+    }
+
     const targetPath = path.join(__dirname, 'src', 'modules', moduleName);
 
     if (fs.existsSync(targetPath)) {
-      return console.error(`Error: Module [${moduleName}] already exists`);
+      return console.error(`⚠️ Error: Module [${moduleName}] already exists in src/modules/`);
     }
 
     console.log(`🚀 Installing module [${moduleName}]...`);
     
-    // For now we assume the repo contains the module directly
-    const result = spawnSync('git', ['clone', url, targetPath], { stdio: 'inherit' });
-
-    if (result.status === 0) {
-      // Clean up .git folder inside module
-      const gitPath = path.join(targetPath, '.git');
-      if (fs.existsSync(gitPath)) {
-        fs.rmSync(gitPath, { recursive: true, force: true });
+    if (isSparse) {
+      // ── SPARSE CHECKOUT LOGIC ──
+      const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'simaju-module-'));
+      try {
+        console.log(`   Connecting to registry...`);
+        let res = spawnSync('git', ['clone', '--filter=blob:none', '--no-checkout', url, tempDir], { stdio: 'inherit' });
+        if (res.status !== 0) throw new Error('Git clone failed');
+        
+        console.log(`   Fetching specific module [${moduleName}]...`);
+        res = spawnSync('git', ['sparse-checkout', 'set', moduleName], { cwd: tempDir, stdio: 'inherit' });
+        if (res.status !== 0) throw new Error('Git sparse-checkout set failed');
+        
+        res = spawnSync('git', ['checkout'], { cwd: tempDir, stdio: 'inherit' });
+        if (res.status !== 0) throw new Error('Git checkout failed');
+        
+        const sourceModulePath = path.join(tempDir, moduleName);
+        if (!fs.existsSync(sourceModulePath)) {
+           throw new Error(`Module [${moduleName}] not found in registry repository`);
+        }
+        
+        fs.cpSync(sourceModulePath, targetPath, { recursive: true });
+        console.log(`\\x1b[32m✅ Module [${moduleName}] installed successfully via Sparse-Checkout.\\x1b[0m`);
+      } catch (err) {
+        console.error(`❌ Failed to install module [${moduleName}]: ${err.message}`);
+      } finally {
+        if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
       }
-      console.log(`\x1b[32m✅ Module [${moduleName}] installed successfully.\x1b[0m`);
-      console.log(`\x1b[33m👉 Register it in src/core/router.js to activate.\x1b[0m`);
     } else {
-      console.error(`❌ Failed to install module [${moduleName}].`);
+      // ── NORMAL CLONE LOGIC ──
+      const result = spawnSync('git', ['clone', url, targetPath], { stdio: 'inherit' });
+      if (result.status === 0) {
+        const gitPath = path.join(targetPath, '.git');
+        if (fs.existsSync(gitPath)) {
+          fs.rmSync(gitPath, { recursive: true, force: true });
+        }
+        console.log(`\\x1b[32m✅ Module [${moduleName}] installed successfully.\\x1b[0m`);
+      } else {
+        console.error(`❌ Failed to install module [${moduleName}].`);
+      }
     }
+  },
+
+  'install:all': () => {
+    const configPath = path.join(__dirname, 'simaju.json');
+    if (!fs.existsSync(configPath)) {
+      return console.error('❌ Error: simaju.json not found in root directory.');
+    }
+
+    let config;
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch (e) {
+      return console.error('❌ Error: simaju.json contains invalid JSON.');
+    }
+
+    console.log('\\n\\x1b[1m\\x1b[36m🚀 Simaju Bulk Installer\\x1b[0m');
+    console.log('──────────────────────────────────────────────────\\n');
+
+    // Modul bisa array (registry sparse checkout) atau object (url normal)
+    if (config.modules && Array.isArray(config.modules)) {
+      console.log(`\\n📦 Installing Modules from Registry...`);
+      for (const mod of config.modules) {
+        console.log(`\\n➤ [${mod}]`);
+        commands['module:install'](mod);
+      }
+    } else if (config.modules) {
+      console.log(`\\n📦 Installing Modules from URLs...`);
+      for (const [name, url] of Object.entries(config.modules)) {
+        console.log(`\\n➤ [${name}] from ${url}`);
+        commands['module:install'](url, name);
+      }
+    }
+
+    const installItems = (type, items, handler) => {
+      if (!items || Object.keys(items).length === 0) return;
+      console.log(`\\n📦 Installing ${type}...`);
+      for (const [name, url] of Object.entries(items)) {
+        console.log(`\\n➤ [${name}] from ${url}`);
+        handler(url, name);
+      }
+    };
+
+    installItems('Plugins', config.plugins, commands['plugin:install']);
+    installItems('Themes', config.themes, commands['theme:install']);
+
+    console.log('\\n\\x1b[1m\\x1b[32m✨ Bulk Installation Completed!\\x1b[0m\\n');
   },
 
   'init': async () => {

@@ -20,7 +20,8 @@ class MigrationManager {
    * Memastikan tabel migrations ada di database.
    */
   async _ensureMigrationsTable() {
-    const driver = DB.connection(DB.defaultConnection).driver;
+    const conn = await DB._resolveConnection(DB.defaultConnection);
+    const driver = conn.driver;
 
     if (driver === 'mongodb') {
       // MongoDB handled automatically when inserting, but we can ensure collection

@@ -3,15 +3,20 @@
 const DB = require('../index');
 
 module.exports = {
-  up: async () => {
+  up: async (DB) => {
+    const conn = await DB._resolveConnection(DB.defaultConnection);
+    const driver = conn.driver;
+    const pk = driver === 'postgres' ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const dt = driver === 'postgres' ? 'TIMESTAMP' : 'DATETIME';
+
     await DB.raw(`
       CREATE TABLE IF NOT EXISTS activity_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id ${pk},
         user_id INTEGER NULL,
         activity TEXT NOT NULL,
         payload TEXT NULL,
         ip_address TEXT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at ${dt} DEFAULT CURRENT_TIMESTAMP
       )
     `);
   },

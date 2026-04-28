@@ -1,0 +1,185 @@
+<section class="welcome-section">
+    <h1>Selamat datang kembali, <span id="welcomeName">Pengguna</span>!</h1>
+    <p class="text-muted">Inilah yang terjadi dengan sistem pencatatan barang Anda hari ini.</p>
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Barang</div>
+        <div id="totalItems" class="stat-value">0</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Barang Keluar (Hari Ini)</div>
+        <div id="itemsOut" class="stat-value">0</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Kesehatan Sistem</div>
+        <div class="stat-value" style="color: #10b981;">Optimal</div>
+    </div>
+</div>
+
+<section class="inventory-section" style="margin-top: 4rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="font-size: 2rem; letter-spacing: -0.05em;">Pencatatan Barang</h2>
+        <button id="showRecordModal" class="btn-logout" style="background: #ffffff; color: #000000;">+ Catat Penggunaan</button>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns: 1fr;">
+        <div class="stat-card">
+            <div class="stat-label">Riwayat Penggunaan Terakhir</div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid var(--border);">
+                        <th style="padding: 1rem 0; font-size: 0.75rem; text-transform: uppercase;">Waktu</th>
+                        <th style="padding: 1rem 0; font-size: 0.75rem; text-transform: uppercase;">Barang</th>
+                        <th style="padding: 1rem 0; font-size: 0.75rem; text-transform: uppercase;">User</th>
+                        <th style="padding: 1rem 0; font-size: 0.75rem; text-transform: uppercase;">Jumlah</th>
+                        <th style="padding: 1rem 0; font-size: 0.75rem; text-transform: uppercase;">Tipe</th>
+                    </tr>
+                </thead>
+                <tbody id="usageLogsBody">
+                    <!-- Data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Record Usage Modal (Simple Overlay) -->
+<div id="recordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center;">
+    <div class="stat-card" style="width: 100%; max-width: 500px; padding: 3rem;">
+        <h3 style="margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em;">Catat Penggunaan Barang</h3>
+        <form id="recordForm">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">Pilih Barang</label>
+                <select id="itemSelect" required style="width: 100%; padding: 1rem; background: #000; border: 1px solid var(--border); color: #fff; outline: none;"></select>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">Jumlah</label>
+                <input type="number" id="quantity" required style="width: 100%; padding: 1rem; background: #000; border: 1px solid var(--border); color: #fff; outline: none;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">Tipe</label>
+                <select id="type" required style="width: 100%; padding: 1rem; background: #000; border: 1px solid var(--border); color: #fff; outline: none;">
+                    <option value="out">Barang Keluar</option>
+                    <option value="in">Barang Masuk</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn-logout" style="flex: 1;">Simpan</button>
+                <button type="button" id="closeModal" class="btn-logout" style="flex: 1; background: transparent; color: #fff;">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Authentication Check
+    const userJson = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    
+    if (!userJson || !token) {
+        window.location.href = '/login';
+    } else {
+        const user = JSON.parse(userJson);
+        
+        // Update UI with user info
+        const userNameEls = document.querySelectorAll('#userName, #sideUserName');
+        const userRoleEls = document.querySelectorAll('#userRole, #sideUserRole');
+        const welcomeNameEl = document.getElementById('welcomeName');
+
+        userNameEls.forEach(el => el.textContent = user.name);
+        userRoleEls.forEach(el => el.textContent = user.role || 'user');
+        if (welcomeNameEl) welcomeNameEl.textContent = user.name.split(' ')[0];
+    }
+
+    // Fetch Inventory Data
+    async function fetchInventory() {
+        try {
+            const response = await fetch('/api/inventory', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await response.json();
+            
+            if (response.ok) {
+                const { items, recent_logs } = result.data;
+                
+                // Update stats
+                document.getElementById('totalItems').textContent = items.length;
+                
+                // Update select options
+                const select = document.getElementById('itemSelect');
+                if (select) {
+                    select.innerHTML = '<option value="">Pilih Barang...</option>' + 
+                        items.map(item => `<option value="${item.id}">${item.name} (Stok: ${item.stock})</option>`).join('');
+                }
+
+                // Update logs table
+                const tbody = document.getElementById('usageLogsBody');
+                if (tbody) {
+                    tbody.innerHTML = recent_logs.map(log => `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 1rem 0; font-size: 0.875rem; color: var(--text-muted);">${new Date(log.created_at).toLocaleString('id-ID')}</td>
+                            <td style="padding: 1rem 0; font-size: 0.875rem;">${log.item_name}</td>
+                            <td style="padding: 1rem 0; font-size: 0.875rem;">${log.user_name}</td>
+                            <td style="padding: 1rem 0; font-size: 0.875rem;">${log.quantity}</td>
+                            <td style="padding: 1rem 0; font-size: 0.875rem;">
+                                <span style="color: ${log.type === 'in' ? '#10b981' : '#ef4444'}">${log.type === 'in' ? 'Masuk' : 'Keluar'}</span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch inventory:', err);
+        }
+    }
+
+    // Modal Logic
+    const modal = document.getElementById('recordModal');
+    const showBtn = document.getElementById('showRecordModal');
+    const closeBtn = document.getElementById('closeModal');
+    
+    if (showBtn) showBtn.onclick = () => modal.style.display = 'flex';
+    if (closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
+
+    // Form Logic
+    const recordForm = document.getElementById('recordForm');
+    if (recordForm) {
+        recordForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(userJson);
+            const data = {
+                item_id: document.getElementById('itemSelect').value,
+                user_id: user.id,
+                quantity: document.getElementById('quantity').value,
+                type: document.getElementById('type').value,
+                notes: 'Pencatatan dari dashboard'
+            };
+
+            try {
+                const response = await fetch('/api/inventory/record', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    modal.style.display = 'none';
+                    fetchInventory();
+                } else {
+                    const res = await response.json();
+                    alert(res.message || 'Gagal menyimpan data');
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan sistem');
+            }
+        };
+    }
+
+    // Initial Load
+    fetchInventory();
+</script>

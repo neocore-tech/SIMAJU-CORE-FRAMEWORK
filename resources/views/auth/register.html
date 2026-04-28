@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - SIMAJU CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffffff;
+            --primary-hover: #e2e8f0;
+            --bg: #000000;
+            --card-bg: #000000;
+            --text: #ffffff;
+            --text-muted: #94a3b8;
+            --error: #ff4444;
+            --border: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .register-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 0;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            color: var(--text);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #ffffff;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 1rem;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-register:hover {
+            background: #e2e8f0;
+        }
+
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        #message {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            min-height: 1.25rem;
+        }
+
+        .error { color: var(--error); }
+        .success { color: #10b981; }
+
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="header">
+            <div class="logo">SIMAJU</div>
+            <p class="subtitle">Buat akun premium Anda</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="nama_lengkap">Nama Lengkap</label>
+                <input type="text" id="nama_lengkap" placeholder="Budi Santoso" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Alamat Email</label>
+                <input type="email" id="email" placeholder="budi@contoh.com" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="konfirmasi_password">Konfirmasi Kata Sandi</label>
+                    <input type="password" id="konfirmasi_password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nomor_hp">Nomor HP</label>
+                <input type="text" id="nomor_hp" placeholder="0812..." required>
+            </div>
+            <button type="submit" class="btn-register" id="registerBtn">Daftar Sekarang</button>
+        </form>
+
+        <div id="message"></div>
+
+        <div class="footer">
+            Sudah punya akun? <a href="/login">Masuk</a>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        if (localStorage.getItem('token') && localStorage.getItem('user')) {
+            window.location.href = '/dashboard';
+        }
+
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const messageDiv = document.getElementById('message');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                nama_lengkap: document.getElementById('nama_lengkap').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                konfirmasi_password: document.getElementById('konfirmasi_password').value,
+                nomor_hp: document.getElementById('nomor_hp').value
+            };
+
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+            registerBtn.classList.add('loading');
+            registerBtn.textContent = 'Sedang mendaftar...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = 'Pendaftaran berhasil! Mengalihkan ke halaman login...';
+                    messageDiv.className = 'success';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 500); // Faster redirect
+                } else {
+                    messageDiv.textContent = result.message || 'Pendaftaran gagal';
+                    messageDiv.className = 'error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+                messageDiv.className = 'error';
+            } finally {
+                registerBtn.classList.remove('loading');
+                registerBtn.textContent = 'Daftar Sekarang';
+            }
+        });
+    </script>
+</body>
+</html>

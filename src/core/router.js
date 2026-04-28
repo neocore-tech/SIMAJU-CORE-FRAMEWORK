@@ -1,39 +1,57 @@
 'use strict';
 
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 const PluginManager = require('./plugin-manager');
 
 /**
  * Global Router
  * ─────────────────────────────────────────────────────────────
- * Mendaftarkan semua module routes di sini.
+ * Mendaftarkan semua module routes secara dinamis.
  */
 
-// Import Routes
-const authRoutes = require('../modules/auth/auth.route');
-const userRoutes = require('../modules/user/user.route');
-const categoryRoutes = require('../modules/category/category.route');
-const productRoutes = require('../modules/product/product.route');
-const supplierRoutes = require('../modules/supplier/supplier.route');
-const saleRoutes = require('../modules/sale/sale.route');
-// const purchaseRoutes = require('../modules/purchase/purchase.route');
-const configRoutes = require('../modules/config/config.route');
-const commRoutes = require('../modules/communication/communication.route');
+// Alias mapping for backward compatibility (e.g. pluralization)
+const routeAliases = {
+  'user': '/users',
+  'role': '/roles',
+  'category': '/categories',
+  'product': '/products',
+  'supplier': '/suppliers',
+  'sale': '/sales',
+  'purchase': '/purchases',
+  'file': '/files',
+  'tenant': '/tenants',
+  'custom-field': '/custom-fields',
+  'plugin-manager': '/admin/plugins'
+};
 
-// Register Routes
-router.use('/auth', authRoutes);
-router.use('/users', userRoutes);
-router.use('/categories', categoryRoutes);
-router.use('/products', productRoutes);
-router.use('/suppliers', supplierRoutes);
-router.use('/sales', saleRoutes);
-// router.use('/purchases', purchaseRoutes);
-router.use('/config', configRoutes);
-router.use('/communication', commRoutes);
-router.use('/crm', require('../modules/crm/crm.route'));
-router.use('/lms', require('../modules/lms/lms.route'));
-router.use('/admin/plugins', require('../modules/plugin-manager/plugin-manager.route'));
+const modulesPath = path.join(__dirname, '../modules');
+
+if (fs.existsSync(modulesPath)) {
+  const modules = fs.readdirSync(modulesPath);
+  
+  modules.forEach((moduleName) => {
+    const moduleDir = path.join(modulesPath, moduleName);
+    
+    // Ensure it's a directory
+    if (fs.statSync(moduleDir).isDirectory()) {
+      const routeFile = path.join(moduleDir, `${moduleName}.route.js`);
+      
+      // If a specific route file exists, register it
+      if (fs.existsSync(routeFile)) {
+        try {
+          const moduleRouter = require(routeFile);
+          const routePrefix = routeAliases[moduleName] || `/${moduleName}`;
+          router.use(routePrefix, moduleRouter);
+        } catch (error) {
+          console.error(`❌ Failed to load route for module [${moduleName}]:`, error.message);
+        }
+      }
+    }
+  });
+}
 
 // ── Plugin Routes ─────────────────────────────────────────────
 PluginManager.boot(router, '/plugins');

@@ -34,9 +34,9 @@ module.exports = {
       driver: 'mysql',
       host:     process.env.DB_HOST     || '127.0.0.1',
       port:     Number(process.env.DB_PORT) || 3306,
-      database: process.env.DB_NAME     || 'simaju',
-      username: process.env.DB_USER     || 'root',
-      password: process.env.DB_PASS     || '',
+      database: process.env.DB_DATABASE || process.env.DB_NAME || 'simaju',
+      username: process.env.DB_USERNAME || process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || process.env.DB_PASS || '',
       charset:  'utf8mb4',
       pool: { 
         min: 2, 
@@ -49,11 +49,11 @@ module.exports = {
     // ── PostgreSQL ───────────────────────────────────────────
     postgres: {
       driver: 'postgres',
-      host:     process.env.PG_HOST     || '127.0.0.1',
-      port:     Number(process.env.PG_PORT) || 5432,
-      database: process.env.PG_NAME     || 'simaju',
-      username: process.env.PG_USER     || 'postgres',
-      password: process.env.PG_PASS     || '',
+      host:     process.env.PG_HOST     || process.env.DB_HOST     || '127.0.0.1',
+      port:     Number(process.env.PG_PORT) || Number(process.env.DB_PORT) || 5432,
+      database: process.env.PG_NAME     || process.env.DB_DATABASE || 'simaju',
+      username: process.env.PG_USER     || process.env.DB_USERNAME || 'postgres',
+      password: process.env.PG_PASS     || process.env.DB_PASSWORD || '',
       ssl: process.env.PG_SSL === 'true' ? { rejectUnauthorized: false } : false,
       pool: { 
         min: 2, 
