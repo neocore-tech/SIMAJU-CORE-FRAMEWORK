@@ -1,0 +1,23 @@
+{
+  "name": "create-simaju-app",
+  "version": "1.0.0",
+  "description": "Official scaffolding tool for SIMAJU Core Framework",
+  "bin": {
+    "create-simaju-app": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "simaju",
+    "framework",
+    "create-simaju-app",
+    "cli"
+  ],
+  "author": "SIMAJU Team",
+  "license": "MIT",
+  "dependencies": {
+    "picocolors": "^1.0.0",
+    "prompts": "^2.4.2"
+  }
+}
